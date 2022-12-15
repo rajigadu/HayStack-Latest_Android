@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraintEditEvent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarEditEvent"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Edit Event"
+        app:titleCentered="true"
+        app:navigationIcon="@drawable/arrow_left"
+        app:navigationIconTint="@color/black"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarEditEvent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/marginXLarge"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+
+            <EditText
+                android:id="@+id/editEventName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/event_name"
+                android:imeOptions="actionNext"
+                android:inputType="text|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editHostName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/host_name"
+                android:imeOptions="actionNext"
+                android:inputType="text|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editContactInfoOne"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/contact_info"
+                android:imeOptions="actionNext"
+                android:inputType="text|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:drawableEnd="@drawable/chevron_down"
+                android:editable="false"
+                android:focusable="true"
+                android:fontFamily="@font/lato"
+                android:foreground="?selectableItemBackground"
+                android:hint="@string/country"
+                android:imeOptions="actionNext"
+                android:inputType="none"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:drawableEnd="@drawable/chevron_down"
+                android:editable="false"
+                android:focusable="true"
+                android:fontFamily="@font/lato"
+                android:foreground="?selectableItemBackground"
+                android:hint="@string/state"
+                android:imeOptions="actionNext"
+                android:inputType="none"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/city"
+                android:imeOptions="actionNext"
+                android:inputType="text|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editZipCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/zip_code"
+                android:imeOptions="actionNext"
+                android:inputType="number|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view12"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine" />
+
+            <EditText
+                android:id="@+id/editStreetAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/street_address"
+                android:imeOptions="actionNext"
+                android:inputType="textPostalAddress|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium">
+
+                <TextView
+                    android:id="@+id/labelStart"
+                    style="@style/start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start"
+                    android:textColor="@color/colorLabelText"
+                    app:layout_constraintEnd_toEndOf="@id/view8"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:layout_marginEnd="@dimen/margin_8dp"
+                    android:alpha="0.5"
+                    android:background="@color/colorBottomLine"
+                    app:layout_constraintEnd_toStartOf="@+id/view9"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/inputStart" />
+
+                <TextView
+                    android:id="@+id/labelEnd"
+                    style="@style/start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end"
+                    android:textColor="@color/colorLabelText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="@+id/view9"
+                    app:layout_constraintTop_toTopOf="@+id/labelStart" />
+
+                <View
+                    android:id="@+id/view9"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="@dimen/margin_8dp"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:alpha="0.5"
+                    android:background="@color/colorBottomLine"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/view8"
+                    app:layout_constraintTop_toBottomOf="@+id/inputEnd"
+                    tools:layout_editor_absoluteX="24dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputStart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="none"
+                    app:layout_constraintEnd_toEndOf="@+id/view8"
+                    app:layout_constraintStart_toStartOf="@+id/view8"
+                    app:layout_constraintTop_toBottomOf="@+id/labelStart">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/editStartDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:drawableEnd="@drawable/chevron_down"
+                        android:focusable="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="none"
+                        android:textSize="@dimen/font_14sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputEnd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="none"
+                    app:layout_constraintEnd_toEndOf="@+id/view9"
+                    app:layout_constraintStart_toStartOf="@+id/view9"
+                    app:layout_constraintTop_toTopOf="@+id/inputStart"
+                    tools:layout_editor_absoluteY="24dp">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/editEndDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:drawableEnd="@drawable/chevron_down"
+                        android:focusable="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="none"
+                        android:textSize="@dimen/font_14sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/labelStartTime"
+                    style="@style/start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:text="@string/start_time"
+                    android:textColor="@color/colorLabelText"
+                    app:layout_constraintEnd_toEndOf="@id/view8"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="@id/view8"
+                    app:layout_constraintTop_toBottomOf="@+id/view8" />
+
+                <TextView
+                    android:id="@+id/labelEndTime"
+                    style="@style/start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end_time"
+                    android:textColor="@color/colorLabelText"
+                    app:layout_constraintEnd_toEndOf="@id/view9"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="@+id/view9"
+                    app:layout_constraintTop_toTopOf="@id/labelStartTime" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputStartTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="none"
+                    app:layout_constraintEnd_toEndOf="@+id/view8"
+                    app:layout_constraintStart_toStartOf="@id/view8"
+                    app:layout_constraintTop_toBottomOf="@+id/labelStartTime">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/editStartTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:drawableEnd="@drawable/chevron_down"
+                        android:focusable="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="none"
+                        android:textSize="@dimen/font_14sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputEndTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="none"
+                    app:layout_constraintEnd_toEndOf="@+id/view9"
+                    app:layout_constraintStart_toStartOf="@+id/view9"
+                    app:layout_constraintTop_toTopOf="@id/inputStartTime">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/editEndTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:drawableEnd="@drawable/chevron_down"
+                        android:focusable="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="none"
+                        android:textSize="@dimen/font_14sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:id="@+id/view10"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:alpha="0.5"
+                    android:background="@color/colorBottomLine"
+                    app:layout_constraintEnd_toEndOf="@+id/view8"
+                    app:layout_constraintStart_toStartOf="@+id/view8"
+                    app:layout_constraintTop_toBottomOf="@+id/inputStartTime" />
+
+                <View
+                    android:id="@+id/view11"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:alpha="0.5"
+                    android:background="@color/colorBottomLine"
+                    app:layout_constraintEnd_toEndOf="@+id/view9"
+                    app:layout_constraintStart_toStartOf="@+id/view9"
+                    app:layout_constraintTop_toTopOf="@+id/view10" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/event_descr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:gravity="top"
+                android:lineSpacingExtra="2sp"
+                android:text="@string/event_descr"
+                android:textAppearance="@style/event_descr"
+                android:translationY="-1.2sp"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTextEventDescr"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp">
+
+                <EditText
+                    android:id="@+id/editEventDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:fontFamily="@font/lato"
+                    android:gravity="start"
+                    android:hint="@string/enter_description"
+                    android:inputType="text|textCapWords"
+                    android:maxLength="1000"
+                    android:minLines="5"
+                    android:autofillHints="" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpdateEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:layout_marginBottom="@dimen/marginMedium"
+                android:fontFamily="@font/lato_bold"
+                android:padding="@dimen/padding_12dp"
+                android:text="@string/update_event"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

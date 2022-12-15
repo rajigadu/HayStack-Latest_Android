@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/actionHome"
+        android:title="Home"
+        android:icon="@drawable/home"/>
+    <item
+        android:id="@+id/action"
+        android:title="Home"
+        android:icon="@drawable/refer"/>
+    <item
+        android:id="@+id/actionCreateEvent"
+        android:title="create Event"
+        android:icon="@drawable/add"/>
+    <item
+        android:id="@+id/actionRefer"
+        android:title="Refer A Friend"
+        android:icon="@drawable/refer"/>
+    <item
+        android:id="@+id/actionProfile"
+        android:title="Home"
+        android:icon="@drawable/user_profile"/>
+
+</menu>

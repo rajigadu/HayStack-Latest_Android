@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraintCreateGroup"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarCreateGroup"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/arrow_left"
+        app:navigationIconTint="@color/white"
+        app:title="Create Group"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/white" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarCreateGroup" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:id="@+id/inputGroupName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_24dp"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/enter_group_name"
+                android:imeOptions="actionNext"
+                android:inputType="text|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputGroupName"
+                app:layout_constraintStart_toStartOf="@+id/inputGroupName"
+                app:layout_constraintTop_toBottomOf="@+id/inputGroupName" />
+
+            <!--<com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpdateEditGroup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:padding="@dimen/padding12dp"
+                android:text="@string/update"
+                android:textAllCaps="false"
+                app:layout_constraintEnd_toEndOf="@+id/editTextEventDescr"
+                app:layout_constraintStart_toStartOf="@+id/editTextEventDescr"
+                tools:layout_editor_absoluteY="190dp" />
+-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTextGroupDescr"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/view1"
+                app:layout_constraintStart_toStartOf="@+id/view1"
+                app:layout_constraintTop_toBottomOf="@+id/view1">
+
+                <EditText
+                    android:id="@+id/inputGroupDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text|textCapWords"
+                    android:maxLength="1000"
+                    android:imeOptions="actionNext"
+                    android:hint="@string/enter_description"
+                    android:gravity="start"
+                    android:minLines="3"
+                    android:autofillHints="" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/labelAddMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:text="@string/add_member"
+                android:textColor="@color/black"
+                android:textFontWeight="700"
+                android:layout_marginTop="@dimen/marginMedium"
+                app:layout_constraintStart_toStartOf="@+id/editTextGroupDescr"
+                android:textSize="@dimen/font_18sp"
+                app:layout_constraintTop_toBottomOf="@+id/editTextGroupDescr"
+                tools:targetApi="p" />
+
+            <EditText
+                android:id="@+id/inputName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/first_name"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/editTextGroupDescr"
+                app:layout_constraintStart_toStartOf="@+id/editTextGroupDescr"
+                app:layout_constraintTop_toBottomOf="@+id/labelAddMember"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputName"
+                app:layout_constraintStart_toStartOf="@+id/inputName"
+                app:layout_constraintTop_toBottomOf="@+id/inputName" />
+
+            <EditText
+                android:id="@+id/inputEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/email_address"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toBottomOf="@+id/view"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputName"
+                app:layout_constraintStart_toStartOf="@+id/inputName"
+                app:layout_constraintTop_toBottomOf="@+id/inputEmail" />
+
+            <EditText
+                android:id="@+id/inputMobile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/mobile"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/view2"
+                app:layout_constraintStart_toStartOf="@+id/view2"
+                app:layout_constraintTop_toBottomOf="@+id/view2"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputMobile"
+                app:layout_constraintStart_toStartOf="@+id/inputMobile"
+                app:layout_constraintTop_toBottomOf="@+id/inputMobile"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddressBook"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:text="@string/choose_from_address_book"
+                android:textAllCaps="false"
+                android:padding="@dimen/padding12dp"
+                android:layout_marginTop="@dimen/margin_24dp"
+                app:layout_constraintEnd_toEndOf="@+id/view3"
+                app:layout_constraintStart_toStartOf="@+id/view3"
+                app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreateNewGroup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/create_new_group"
+                app:icon="@drawable/math_plus"
+                app:iconGravity="textStart"
+                android:textAllCaps="false"
+                android:fontFamily="@font/lato_bold"
+                android:padding="@dimen/padding_10dp"
+                android:layout_marginTop="@dimen/marginMedium"
+                app:layout_constraintEnd_toEndOf="@+id/btnAddressBook"
+                app:layout_constraintStart_toStartOf="@+id/btnAddressBook"
+                app:layout_constraintTop_toBottomOf="@+id/btnAddressBook" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

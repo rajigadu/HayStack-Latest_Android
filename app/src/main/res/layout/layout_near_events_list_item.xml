@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_8dp"
+    android:paddingEnd="@dimen/padding_8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/eventItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/colorGroupsCardView"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/padding_24dp"
+            android:paddingTop="@dimen/paddingMedium"
+            android:paddingEnd="@dimen/padding_24dp"
+            android:paddingBottom="@dimen/paddingMedium">
+
+            <TextView
+                android:id="@+id/eventName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:layout_marginEnd="@dimen/marginMedium"
+                android:lineSpacingExtra="0sp"
+                android:text="@string/event_manag"
+                android:textAppearance="@style/event_name"
+                app:layout_constraintEnd_toStartOf="@+id/membersCount"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/hostName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:gravity="top"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/host_name"
+                android:textAppearance="@style/host_name"
+                android:translationY="-3.6sp"
+                app:layout_constraintStart_toStartOf="@+id/eventName"
+                app:layout_constraintTop_toBottomOf="@+id/eventName" />
+
+            <TextView
+                android:id="@+id/hostNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:gravity="top"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/host_number"
+                android:textAppearance="@style/host_name"
+                android:translationY="-3.6sp"
+                app:layout_constraintStart_toStartOf="@+id/hostName"
+                app:layout_constraintTop_toBottomOf="@+id/hostName" />
+
+            <ImageView
+                android:id="@+id/membersCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/inspect"
+                android:gravity="top"
+                android:src="@drawable/ic_outline_info_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/eventName" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

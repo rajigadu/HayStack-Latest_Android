@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding_12dp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_16sp"
+        android:gravity="center"
+        android:text="@string/upload_from" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorBottomLine"/>
+
+    <TextView
+        android:id="@+id/actionCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato"
+        android:padding="@dimen/padding_12dp"
+        android:textColor="@color/colorPrimary"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground"
+        android:textSize="@dimen/font_16sp"
+        android:gravity="start|center_vertical"
+        android:drawablePadding="@dimen/padding_24dp"
+        android:text="@string/camera"
+        app:drawableStartCompat="@drawable/ic_baseline_photo_camera_24"
+        app:drawableTint="@color/colorPrimary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorBottomLine"/>
+
+    <TextView
+        android:id="@+id/actionGallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato"
+        android:padding="@dimen/padding_12dp"
+        android:textColor="@color/colorPrimary"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground"
+        android:textSize="@dimen/font_16sp"
+        android:gravity="start|center_vertical"
+        android:drawablePadding="@dimen/padding_24dp"
+        android:text="@string/gallery"
+        app:drawableStartCompat="@drawable/ic_baseline_image_24"
+        app:drawableTint="@color/colorPrimary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorBottomLine"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dialogCancel"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_margin="@dimen/marginMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:textColor="@color/colorPrimary"/>
+
+</LinearLayout>

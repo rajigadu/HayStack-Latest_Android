@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/constraintDateRange"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarDateRange"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Date Range"
+        app:titleCentered="true"
+        app:navigationIcon="@drawable/arrow_left"
+        app:navigationIconTint="@color/black"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarDateRange">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_24dp">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="@dimen/logoWidth"
+                android:layout_height="@dimen/logoHeight"
+                android:layout_marginStart="100dp"
+                android:layout_marginEnd="100dp"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/inspect"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/startDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_24dp"
+                app:boxBackgroundMode="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView2">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/inputStartDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/chevron_down"
+                    android:hint="@string/start_date"
+                    android:inputType="none"
+                    android:editable="false"
+                    android:singleLine="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?selectableItemBackground"
+                    android:imeOptions="actionNext"
+                    android:textSize="@dimen/font_14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:id="@+id/view12"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/startDate"
+                app:layout_constraintStart_toStartOf="@+id/startDate"
+                app:layout_constraintTop_toBottomOf="@+id/startDate" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/startTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:boxBackgroundMode="none"
+                android:layout_marginTop="@dimen/marginMedium"
+                app:layout_constraintEnd_toEndOf="@+id/view12"
+                app:layout_constraintStart_toStartOf="@+id/view12"
+                app:layout_constraintTop_toBottomOf="@+id/view12">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/inputStartTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/chevron_down"
+                    android:hint="@string/start_time"
+                    android:inputType="none"
+                    android:editable="false"
+                    android:singleLine="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?selectableItemBackground"
+                    android:imeOptions="actionNext"
+                    android:textSize="@dimen/font_14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:id="@+id/view13"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/startTime"
+                app:layout_constraintStart_toStartOf="@+id/startTime"
+                app:layout_constraintTop_toBottomOf="@+id/startTime" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/endDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:boxBackgroundMode="none"
+                android:layout_marginTop="@dimen/marginMedium"
+                app:layout_constraintEnd_toEndOf="@+id/view13"
+                app:layout_constraintStart_toStartOf="@+id/view13"
+                app:layout_constraintTop_toBottomOf="@+id/view13">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/inputEndDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/chevron_down"
+                    android:hint="@string/end_date"
+                    android:inputType="none"
+                    android:editable="false"
+                    android:singleLine="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?selectableItemBackground"
+                    android:imeOptions="actionNext"
+                    android:textSize="@dimen/font_14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:id="@+id/view14"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/endDate"
+                app:layout_constraintStart_toStartOf="@+id/endDate"
+                app:layout_constraintTop_toBottomOf="@+id/endDate" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/endTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:boxBackgroundMode="none"
+                android:layout_marginTop="@dimen/marginMedium"
+                app:layout_constraintEnd_toEndOf="@+id/view14"
+                app:layout_constraintStart_toStartOf="@+id/view14"
+                app:layout_constraintTop_toBottomOf="@+id/view14">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/inputEndTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/chevron_down"
+                    android:hint="@string/end_time"
+                    android:inputType="none"
+                    android:editable="false"
+                    android:singleLine="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?selectableItemBackground"
+                    android:imeOptions="actionDone"
+                    android:textSize="@dimen/font_14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:id="@+id/view15"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/endTime"
+                app:layout_constraintStart_toStartOf="@+id/endTime"
+                app:layout_constraintTop_toBottomOf="@+id/endTime" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:fontFamily="@font/lato_bold"
+                android:padding="@dimen/padding12dp"
+                android:text="@string/_continue"
+                android:textAllCaps="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view15" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

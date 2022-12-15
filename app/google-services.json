@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "476286332559",
+    "project_id": "com.haystackevents.app.in",
+    "storage_bucket": "haystackevents.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476286332559:android:d5a2dcdeb6cac14e190afa",
+        "android_client_info": {
+          "package_name": "com.haystackevents.app.in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "476286332559-3afnmf62qakbesem3avbtd41bgcleigk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.haystackevents.app.in",
+            "certificate_hash": "5d24fba81951729d36379485ac9e4e06dd5ec8b7"
+          }
+        },
+        {
+          "client_id": "476286332559-km1j90q54pkke9qnncd0ti5oaq0p9m6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvPRzEPjFcob4kwiY2Z-cJDzQEWRTKvZc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "476286332559-km1j90q54pkke9qnncd0ti5oaq0p9m6a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "476286332559-op311p8ccsm6vfki75hutusrabit41s8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.anaad.Haystack.Army",
+                "app_store_id": "1569125179"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

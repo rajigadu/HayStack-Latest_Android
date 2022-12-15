@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraintManualSearch"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarManualSearch"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Manual Search"
+        app:titleCentered="true"
+        app:navigationIcon="@drawable/arrow_left"
+        app:navigationIconTint="@color/black"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/progressCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        android:visibility="invisible"
+        app:contentPadding="@dimen/padding12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:indeterminate="true" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarManualSearch">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_24dp">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="@dimen/logoWidth"
+                android:layout_height="@dimen/logoHeight"
+                android:layout_marginStart="100dp"
+                android:layout_marginEnd="100dp"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/inspect"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/inputCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/country"
+                android:editable="false"
+                android:drawableEnd="@drawable/chevron_down"
+                android:imeOptions="actionNext"
+                android:inputType="none"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView2"
+                tools:targetApi="m"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view12"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputCountry"
+                app:layout_constraintStart_toStartOf="@+id/inputCountry"
+                app:layout_constraintTop_toBottomOf="@+id/inputCountry" />
+
+            <EditText
+                android:id="@+id/inputState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/select_state"
+                android:editable="false"
+                android:drawableEnd="@drawable/chevron_down"
+                android:imeOptions="actionNext"
+                android:inputType="none"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/view12"
+                app:layout_constraintStart_toStartOf="@+id/view12"
+                app:layout_constraintTop_toBottomOf="@+id/view12"
+                tools:targetApi="m"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view13"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputState"
+                app:layout_constraintStart_toStartOf="@+id/inputState"
+                app:layout_constraintTop_toBottomOf="@+id/inputState" />
+
+            <EditText
+                android:id="@+id/inputZipCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/enter_your_zipcode"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/view13"
+                app:layout_constraintStart_toStartOf="@+id/view13"
+                app:layout_constraintTop_toBottomOf="@+id/view13"
+                tools:targetApi="m"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view14"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputZipCode"
+                app:layout_constraintStart_toStartOf="@+id/inputZipCode"
+                app:layout_constraintTop_toBottomOf="@+id/inputZipCode" />
+
+            <EditText
+                android:id="@+id/inputCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/select_city"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/view14"
+                app:layout_constraintStart_toStartOf="@+id/view14"
+                app:layout_constraintTop_toBottomOf="@+id/view14"
+                tools:targetApi="m"
+                android:autofillHints=""
+                android:inputType="text" />
+
+            <View
+                android:id="@+id/view15"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputCity"
+                app:layout_constraintStart_toStartOf="@+id/inputCity"
+                app:layout_constraintTop_toBottomOf="@+id/inputCity" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:fontFamily="@font/lato_bold"
+                android:padding="@dimen/padding12dp"
+                android:text="@string/_continue"
+                android:textAllCaps="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view15" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

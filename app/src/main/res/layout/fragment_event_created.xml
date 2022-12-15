@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarEventCreated"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Create Event"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <ImageView
+        android:id="@+id/imageView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginXXLarge"
+        android:contentDescription="@string/content_description"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_event"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarEventCreated" />
+
+    <TextView
+        android:id="@+id/congratulat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_32dp"
+        android:gravity="center_horizontal|top"
+        android:padding="@dimen/padding12dp"
+        android:lineSpacingExtra="0sp"
+        android:text="@string/congrats"
+        android:textAppearance="@style/congratulat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView16" />
+
+    <TextView
+        android:id="@+id/your_event_"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding12dp"
+        android:gravity="center_horizontal|top"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/your_event_"
+        android:textAppearance="@style/your_event_"
+        android:translationY="-1.8sp"
+        app:layout_constraintEnd_toEndOf="@+id/congratulat"
+        app:layout_constraintStart_toStartOf="@+id/congratulat"
+        app:layout_constraintTop_toBottomOf="@+id/congratulat" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCrateAnotherEvent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_24dp"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/create_another_event"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/your_event_" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnClose"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_8dp"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/close"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="@+id/btnCrateAnotherEvent"
+        app:layout_constraintStart_toStartOf="@+id/btnCrateAnotherEvent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCrateAnotherEvent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

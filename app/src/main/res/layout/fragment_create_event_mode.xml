@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarEventMode"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Create Event"
+        app:titleCentered="true"
+        app:navigationIconTint="@color/black"
+        app:navigationIcon="@drawable/arrow_left"
+        app:titleTextAppearance="@style/ToolbarTitle" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarEventMode">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/padding_24dp">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="@dimen/logoWidth"
+                android:layout_height="@dimen/logoHeight"
+                android:layout_marginStart="100dp"
+                android:layout_marginEnd="100dp"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/inspect"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/how_would_y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:gravity="top"
+                android:lineSpacingExtra="5sp"
+                android:text="@string/how_would_y"
+                android:textAppearance="@style/how_would_y"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+            <RadioGroup
+                android:id="@+id/advertiseEventGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/margin_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/how_would_y"
+                app:layout_constraintTop_toBottomOf="@+id/how_would_y">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/advertisePublic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:fontFamily="@font/lato"
+                    android:paddingStart="@dimen/padding12dp"
+                    android:text="@string/_public"
+                    tools:ignore="RtlSymmetry" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/advertisePrivate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:paddingStart="@dimen/padding12dp"
+                    android:text="@string/_private"
+                    tools:ignore="RtlSymmetry" />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/would_you_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:lineSpacingExtra="5sp"
+                android:text="@string/would_you"
+                android:textAppearance="@style/how_would_y"
+                android:layout_marginTop="@dimen/margin_24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/advertiseEventGroup" />
+
+            <RadioGroup
+                android:id="@+id/hostContactInfoGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/how_would_y"
+                app:layout_constraintTop_toBottomOf="@+id/would_you_1">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/hostContactPublic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:fontFamily="@font/lato"
+                    android:paddingStart="@dimen/padding12dp"
+                    android:text="@string/_public"
+                    tools:ignore="RtlSymmetry" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/hostContactPrivate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:paddingStart="@dimen/padding12dp"
+                    android:text="@string/_private"
+                    tools:ignore="RtlSymmetry" />
+
+            </RadioGroup>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:padding="@dimen/padding12dp"
+                android:text="@string/_continue"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:fontFamily="@font/lato_bold"
+                app:layout_constraintEnd_toEndOf="@+id/hostContactInfoGroup"
+                app:layout_constraintStart_toStartOf="@+id/hostContactInfoGroup"
+                app:layout_constraintTop_toBottomOf="@+id/hostContactInfoGroup" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

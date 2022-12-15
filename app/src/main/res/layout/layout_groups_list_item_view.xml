@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_8dp"
+    android:paddingEnd="@dimen/padding_8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/eventItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground"
+        app:cardBackgroundColor="@color/colorGroupsCardView"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/padding_24dp"
+            android:paddingTop="@dimen/paddingMedium"
+            android:paddingEnd="@dimen/padding_24dp"
+            android:paddingBottom="@dimen/paddingMedium">
+
+            <TextView
+                android:id="@+id/eventName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:lineSpacingExtra="0sp"
+                android:text="@string/event_manag"
+                android:textAppearance="@style/event_manag"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/membersCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/people_4_"
+                android:textAppearance="@style/people_4_"
+                android:translationY="-3.6sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventName" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/editEventGroup"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:cardCornerRadius="50dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:contentDescription="@string/inspect"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_edit" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/addMember"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:visibility="invisible"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="#BDBDBD"
+                android:gravity="center"
+                android:elevation="2dp"
+                app:layout_constraintStart_toStartOf="@+id/membersLayout"
+                app:layout_constraintTop_toTopOf="@+id/membersLayout">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/inspect"
+                    android:src="@drawable/math_plus"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:id="@+id/membersLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/membersCount">
+
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/deleteGroup"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:cardElevation="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="50dp"
+                android:background="?selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/inspect"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_delete"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

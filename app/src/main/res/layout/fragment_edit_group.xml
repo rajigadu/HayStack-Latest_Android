@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraintEditGroup"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarEditGroup"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/arrow_left"
+        app:navigationIconTint="@color/white"
+        app:title="Edit Group"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/ToolbarTitle"
+        app:titleTextColor="@color/white" />
+
+    <EditText
+        android:id="@+id/inputGroupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_24dp"
+        android:layout_marginTop="@dimen/marginMedium"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/lato"
+        android:hint="@string/enter_group_name"
+        android:imeOptions="actionNext"
+        android:inputType="text|textCapWords"
+        android:singleLine="true"
+        android:textSize="@dimen/font_16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarEditGroup"
+        android:autofillHints="" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_8dp"
+        android:alpha="0.5"
+        android:background="@color/colorBottomLine"
+        app:layout_constraintEnd_toEndOf="@+id/inputGroupName"
+        app:layout_constraintStart_toStartOf="@+id/inputGroupName"
+        app:layout_constraintTop_toBottomOf="@+id/inputGroupName" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/animationLoader"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintTop_toTopOf="@+id/btnUpdateEditGroup"
+        app:layout_constraintBottom_toBottomOf="@+id/btnUpdateEditGroup"
+        app:layout_constraintStart_toStartOf="@+id/btnUpdateEditGroup"
+        app:layout_constraintEnd_toEndOf="@+id/btnUpdateEditGroup">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/progress_loader"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnUpdateEditGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/update"
+        android:textAllCaps="false"
+        android:layout_marginTop="@dimen/margin_24dp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextEventDescr"
+        app:layout_constraintStart_toStartOf="@+id/editTextEventDescr"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEventDescr" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editTextEventDescr"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginMedium"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/view1"
+        app:layout_constraintStart_toStartOf="@+id/view1"
+        app:layout_constraintTop_toBottomOf="@+id/view1">
+
+        <EditText
+            android:id="@+id/inputGroupDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textCapWords"
+            android:gravity="start"
+            android:maxLength="1000"
+            android:imeOptions="actionDone"
+            android:minLines="5"
+            android:importantForAutofill="no"
+            android:autofillHints="" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

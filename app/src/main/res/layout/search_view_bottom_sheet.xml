@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/bottomSheet"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:elevation="2dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingStart="@dimen/padding_24dp"
+    android:paddingEnd="@dimen/padding_24dp"
+    android:paddingBottom="@dimen/padding_24dp">
+
+    <LinearLayout
+        android:id="@+id/layoutMapRadius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/retangle_background"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkNationWide">
+
+        <AutoCompleteTextView
+            android:id="@+id/mapRadius"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/retangle_background"
+            android:fontFamily="@font/lato"
+            android:hint="@string/radius"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:layout_weight="1"
+            android:paddingStart="@dimen/padding12dp"
+            android:paddingEnd="@dimen/padding_8dp"
+            android:textSize="@dimen/font_16sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/setMapRadius"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_margin="@dimen/margin_5dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground"
+            android:padding="@dimen/padding_8dp"
+            app:cardCornerRadius="50dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/map_radius"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/checkNationWide"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_bold"
+        android:text="@string/nationwide"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_14sp"
+        android:paddingStart="@dimen/paddingMedium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnManualSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/manual_search"
+        android:layout_marginTop="@dimen/marginMedium"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/layoutMapRadius"
+        tools:layout_editor_absoluteX="24dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_bold"
+        android:textAllCaps="false"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/_continue"
+        app:layout_constraintTop_toBottomOf="@+id/btnManualSearch"
+        tools:layout_editor_absoluteX="24dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

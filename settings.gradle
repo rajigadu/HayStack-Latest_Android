@@ -1,0 +1,2 @@
+rootProject.name = "Haystack Events"
+include ':app'

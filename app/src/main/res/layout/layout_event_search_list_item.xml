@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/padding_8dp"
+    android:paddingEnd="@dimen/padding_8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/eventItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/colorGroupsCardView"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/padding_24dp"
+            android:paddingTop="@dimen/paddingMedium"
+            android:paddingEnd="@dimen/padding_24dp"
+            android:paddingBottom="@dimen/paddingMedium">
+
+            <TextView
+                android:id="@+id/event_manag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:lineSpacingExtra="0sp"
+                android:text="@string/event_manag"
+                android:textAppearance="@style/event_manag"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/hostName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:gravity="top"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/host_name"
+                android:textAppearance="@style/host_name"
+                android:translationY="-3.6sp"
+                app:layout_constraintStart_toStartOf="@+id/event_manag"
+                app:layout_constraintTop_toBottomOf="@+id/event_manag" />
+
+            <TextView
+                android:id="@+id/hostNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/host_number"
+                android:textAppearance="@style/host_name"
+                android:translationY="-3.6sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/hostName" />
+
+            <TextView
+                android:id="@+id/membersCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:gravity="top"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/people_4_"
+                android:textAppearance="@style/people_4_"
+                android:translationY="-3.6sp"
+                app:layout_constraintEnd_toEndOf="@+id/members"
+                app:layout_constraintTop_toBottomOf="@+id/event_manag" />
+
+            <ImageView
+                android:id="@+id/members"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:elevation="2dp"
+                android:contentDescription="@string/inspect"
+                android:src="@drawable/ic_circle_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/membersCount" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

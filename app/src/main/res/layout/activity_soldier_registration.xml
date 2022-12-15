@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraintSingUp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/padding_24dp"
+    android:paddingEnd="@dimen/padding_24dp"
+    tools:ignore="RtlSymmetry">
+
+    <ProgressBar
+        android:id="@+id/progressLoader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:indeterminate="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintEditLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/inspect"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/inputFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/first_name"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputFirstName"
+                app:layout_constraintStart_toStartOf="@+id/inputFirstName"
+                app:layout_constraintTop_toBottomOf="@+id/inputFirstName" />
+
+            <EditText
+                android:id="@+id/inputLastName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/last_name"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName|textCapWords"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintTop_toBottomOf="@+id/view"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputLastName" />
+
+            <EditText
+                android:id="@+id/inputEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/email_address"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintTop_toBottomOf="@+id/view1"
+                android:autofillHints="" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputEmail"/>
+
+            <EditText
+                android:id="@+id/inputAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/address"
+                android:imeOptions="actionNext"
+                android:inputType="text|textCapSentences"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintTop_toBottomOf="@+id/view3"
+                android:autofillHints="@string/address" />
+
+            <View
+                android:id="@+id/view9"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputAddress"/>
+
+            <EditText
+                android:id="@+id/inputPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/password"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintTop_toBottomOf="@+id/view9"
+                android:autofillHints="@string/password" />
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputPassword"/>
+
+            <EditText
+                android:id="@+id/inputNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/mobile"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintTop_toBottomOf="@+id/view4"
+                android:autofillHints="@string/mobile" />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputNumber"/>
+
+            <TextView
+                android:id="@+id/inputCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/country"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/view5"
+                android:autofillHints="@string/country"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputCountry"/>
+
+            <TextView
+                android:id="@+id/inputState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/state"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/view6"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+
+            <View
+                android:id="@+id/view7"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputState"/>
+
+            <EditText
+                android:id="@+id/inputCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/city"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:inputType="text|textCapSentences"
+                android:imeOptions="actionNext"
+                app:layout_constraintTop_toBottomOf="@+id/view7"
+                android:autofillHints="@string/city" />
+
+            <View
+                android:id="@+id/view8"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputCity"/>
+
+            <EditText
+                android:id="@+id/inputZipcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/zip_code"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                android:inputType="number"
+                android:maxLength="6"
+                app:layout_constraintTop_toBottomOf="@+id/view8"
+                android:autofillHints="@string/zip_code"/>
+
+            <View
+                android:id="@+id/view10"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:alpha="0.5"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/inputZipcode"/>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/accTypeIndividual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                android:layoutDirection="ltr"
+                android:lineSpacingExtra="2sp"
+                android:layout_marginTop="@dimen/marginLarge"
+                android:text="@string/individual"
+                android:textSize="@dimen/font_14sp"
+                android:fontFamily="@font/lato"
+                android:textAppearance="@style/categories"
+                android:translationY="-1.2sp"
+                app:layout_constraintEnd_toStartOf="@+id/accTypeCompany"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view10" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/accTypeCompany"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                android:layoutDirection="ltr"
+                android:lineSpacingExtra="2sp"
+                android:text="@string/company"
+                android:padding="0dp"
+                android:textSize="@dimen/font_14sp"
+                android:fontFamily="@font/lato"
+                android:textAppearance="@style/categories"
+                android:translationY="-1.2sp"
+                app:layout_constraintTop_toTopOf="@+id/accTypeIndividual"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/accTypeIndividual"/>
+
+            <TextView
+                android:id="@+id/textTermsAndConditions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_12dp"
+                android:layout_marginTop="@dimen/margin_32dp"
+                android:paddingStart="@dimen/padding_8dp"
+                android:text="@string/terms_and_condition"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/accTypeIndividual" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_32dp"
+                android:src="@drawable/check_box"
+                android:contentDescription="@string/inspect"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/accTypeIndividual" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:contentDescription="@string/inspect"
+                android:src="@drawable/check_box"
+                app:layout_constraintTop_toBottomOf="@+id/textTermsAndConditions"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/textAcceptTerms"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:paddingStart="@dimen/padding_8dp"
+                android:text="@string/accept_terms"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintStart_toStartOf="@+id/textTermsAndConditions"
+                app:layout_constraintTop_toTopOf="@+id/imageView5"
+                tools:ignore="RtlSymmetry" />
+
+            <TextView
+                android:id="@+id/textSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:textAppearance="@style/sign_in"
+                app:layout_constraintStart_toStartOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/textAcceptTerms" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnSignUp"
+                android:layout_width="@dimen/btnWidthSignIn"
+                android:layout_height="@dimen/btnHeightSignIn"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textSignUp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textSignUp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/inspect"
+                    android:layout_gravity="center"
+                    android:src="@drawable/arrow_right" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/forgot_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/forgot_pass"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground"
+                android:paddingStart="@dimen/padding_8dp"
+                android:paddingTop="@dimen/padding_8dp"
+                android:paddingBottom="@dimen/padding_5dp"
+                android:textAppearance="@style/forgot_pass"
+                app:layout_constraintBottom_toBottomOf="@+id/signin"
+                app:layout_constraintEnd_toEndOf="@+id/btnSignUp"
+                app:layout_constraintTop_toTopOf="@+id/signin"
+                tools:ignore="RtlSymmetry" />
+
+            <TextView
+                android:id="@+id/signin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginXLarge"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="top"
+                android:layout_marginBottom="@dimen/marginLarge"
+                android:paddingTop="@dimen/padding_5dp"
+                android:paddingEnd="@dimen/padding_5dp"
+                android:paddingBottom="@dimen/padding_5dp"
+                android:text="@string/sign_in"
+                android:textAppearance="@style/signup"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textSignUp"
+                app:layout_constraintTop_toBottomOf="@+id/textSignUp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_8dp"
+                android:background="@color/black"
+                app:layout_constraintEnd_toEndOf="@+id/forgot_pass"
+                app:layout_constraintStart_toStartOf="@+id/forgot_pass"
+                app:layout_constraintTop_toBottomOf="@+id/forgot_pass" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
