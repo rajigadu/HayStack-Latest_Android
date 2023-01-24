@@ -16,6 +16,7 @@ import com.haystackevents.app.`in`.network.response.login.LogIn
 import com.haystackevents.app.`in`.utils.Extensions.getDeviceUid
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.Extensions.showErrorResponse
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -60,7 +61,7 @@ class LogInActivity: AppCompatActivity() {
 
     private fun validateUserCredentials() {
         val deviceId = getDeviceUid(this)
-        showBottomSheet()
+        ProgressCaller.showProgressDialog(this)
         Repository.userLogIn(userName!!, password!!, deviceId).enqueue(
             object : Callback<LogIn>{
                 override fun onResponse(call: Call<LogIn>, response: Response<LogIn>) {
@@ -82,30 +83,14 @@ class LogInActivity: AppCompatActivity() {
 
                     }catch (e: Exception){e.printStackTrace()}
 
-                    hideBottomSheet()
+                    ProgressCaller.hideProgressDialog()
                 }
 
                 override fun onFailure(call: Call<LogIn>, t: Throwable) {
                     showErrorResponse(t, binding?.constraintLogin)
-                    hideBottomSheet()
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })
-    }
-
-    private fun showBottomSheet(){
-        bottomSheet = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
-        val view = LayoutInflater.from(applicationContext)
-            .inflate(
-                R.layout.authentication_progress_bottom_sheet,
-                findViewById<ConstraintLayout>(R.id.bottom_sheet)
-            )
-        bottomSheet.setCancelable(false)
-        bottomSheet.setContentView(view)
-        bottomSheet.show()
-    }
-
-    private  fun hideBottomSheet(){
-        bottomSheet.hide()
     }
 }

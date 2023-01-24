@@ -153,7 +153,7 @@ class SignUpActivity: AppCompatActivity() {
     }
 
     private fun completeSoldierRegistration() {
-        showBottomSheet()
+        ProgressCaller.showProgressDialog(this)
         Repository.soldierRegistration(fName!!, lName!!, email!!, address!!, zipcode!!,
             password!!, number!!, country!!, state!!, city!!, accountType!!)
             .enqueue(object : Callback<SignUpResponse>{
@@ -174,12 +174,12 @@ class SignUpActivity: AppCompatActivity() {
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    hideBottomSheet()
+                    ProgressCaller.hideProgressDialog()
                 }
 
                 override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
                     showErrorResponse(t, binding?.constraintSingUp)
-                    hideBottomSheet()
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })
@@ -275,29 +275,6 @@ class SignUpActivity: AppCompatActivity() {
 
             else -> return true
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun showBottomSheet(){
-        bottomSheet = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
-        val view = LayoutInflater.from(applicationContext)
-            .inflate(
-                R.layout.authentication_progress_bottom_sheet,
-                findViewById<ConstraintLayout>(R.id.bottom_sheet)
-            )
-        val title = view.findViewById<TextView>(R.id.progress_title)
-        val subTitle = view.findViewById<TextView>(R.id.progress_sub_title)
-
-        title.text = "Soldier Registration"
-        subTitle.text = "Verifying Registration Details, Please wait..."
-
-        bottomSheet?.setCancelable(false)
-        bottomSheet?.setContentView(view)
-        bottomSheet?.show()
-    }
-
-    private  fun hideBottomSheet(){
-        bottomSheet?.dismiss()
     }
 
     private fun showStatesListDialog() {
