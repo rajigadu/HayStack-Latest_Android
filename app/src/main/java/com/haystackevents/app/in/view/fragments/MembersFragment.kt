@@ -13,9 +13,12 @@ import com.haystackevents.app.`in`.R
 import com.haystackevents.app.`in`.databinding.FragmentMembersBinding
 import com.haystackevents.app.`in`.manager.SessionManager
 import com.haystackevents.app.`in`.network.repository.Repository
+import com.haystackevents.app.`in`.network.response.event.Event
 import com.haystackevents.app.`in`.network.response.group_members.Data
 import com.haystackevents.app.`in`.network.response.group_members.DefaultResponse
 import com.haystackevents.app.`in`.network.response.group_members.GroupMembers
+import com.haystackevents.app.`in`.utils.AppConstants
+import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
 import com.haystackevents.app.`in`.utils.AppConstants.FROM_ADD_MEMBERS_FRAGMENT
 import com.haystackevents.app.`in`.utils.AppConstants.GROUP_ID
 import com.haystackevents.app.`in`.utils.AppConstants.MEMBER_EMAIL
@@ -35,49 +38,53 @@ import retrofit2.Response
 class MembersFragment: Fragment(), MembersListAdapter.MembersListItemClick {
 
 
-    private lateinit var binding: FragmentMembersBinding
+    private var binding: FragmentMembersBinding? = null
     private lateinit var membersAdapter: MembersListAdapter
     private var listMembers = arrayListOf<Data>()
     private var groupId: String? = null
     private var navigateFrom: Boolean? = false
+    private var fromPublish: Boolean? = false
+    private var events: Event? = null
 
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentMembersBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        events = arguments?.getSerializable(ARG_SERIALIZABLE) as? Event
         groupId = arguments?.getString(GROUP_ID)
         navigateFrom = arguments?.getBoolean(FROM_ADD_MEMBERS_FRAGMENT)
+        fromPublish = arguments?.getBoolean(AppConstants.FROM_ADD_MEMBERS_PUBLISH_FRAGMENT)
 
-        binding.refreshMembersList.setColorSchemeColors(ContextCompat.getColor(requireContext(),
+        binding?.refreshMembersList?.setColorSchemeColors(ContextCompat.getColor(requireContext(),
             R.color.colorPrimary))
 
-        binding.refreshMembersList.setOnRefreshListener {
+        binding?.refreshMembersList?.setOnRefreshListener {
             listMembers.clear()
             getGroupMembersList()
         }
 
         membersAdapter = MembersListAdapter(requireContext(), this)
-        binding.recyclerViewMembers.apply {
+        binding?.recyclerViewMembers?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = membersAdapter
             itemAnimator = RecyclerViewCustomAnimation()
         }
 
-        binding.toolbarMembers.setNavigationOnClickListener {
+        binding?.toolbarMembers?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.toolbarMembers.setOnMenuItemClickListener {
+        binding?.toolbarMembers?.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.addMember -> {
                     val bundle = bundleOf(
@@ -93,7 +100,7 @@ class MembersFragment: Fragment(), MembersListAdapter.MembersListItemClick {
     }
 
     private fun getGroupMembersList() {
-        binding.refreshMembersList.isRefreshing = true
+        binding?.refreshMembersList?.isRefreshing = true
         Repository.getGroupMembers(groupId!!, SessionManager.instance.getUserId())
             .enqueue(object : Callback<GroupMembers>{
                 override fun onResponse(
@@ -117,12 +124,12 @@ class MembersFragment: Fragment(), MembersListAdapter.MembersListItemClick {
 
                     }catch (e: Exception){e.printStackTrace()}
 
-                    binding.refreshMembersList.isRefreshing = false
+                    binding?.refreshMembersList?.isRefreshing = false
                 }
 
                 override fun onFailure(call: Call<GroupMembers>, t: Throwable) {
-                    showSnackBar(binding.constraintMembers, t.localizedMessage!!)
-                    binding.refreshMembersList.isRefreshing = false
+                    showSnackBar(binding?.constraintMembers, t.localizedMessage!!)
+                    binding?.refreshMembersList?.isRefreshing = false
                 }
 
             })
@@ -160,7 +167,7 @@ class MembersFragment: Fragment(), MembersListAdapter.MembersListItemClick {
                         if (response.isSuccessful){
                             if (response.body()?.status == "1"){
 
-                                showSnackBar(binding.constraintMembers, response.body()?.message!!)
+                                showSnackBar(binding?.constraintMembers, response.body()?.message!!)
 
                                 getGroupMembersList()
 
@@ -173,7 +180,7 @@ class MembersFragment: Fragment(), MembersListAdapter.MembersListItemClick {
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    showSnackBar(binding.constraintMembers, t.localizedMessage!!)
+                    showSnackBar(binding?.constraintMembers, t.localizedMessage!!)
                 }
 
             })
@@ -182,9 +189,20 @@ class MembersFragment: Fragment(), MembersListAdapter.MembersListItemClick {
     override fun memberItemSelected(data: Data) {
         if (navigateFrom == true) {
             activity?.supportFragmentManager?.setFragmentResult(
-                "fragment-callback", bundleOf("data" to data)
+                "fragment-callback1", bundleOf(
+                    "data" to data,
+                    ARG_SERIALIZABLE to events
+                )
             )
             findNavController().navigate(R.id.action_membersFragment_to_addMembersFragment)
+        } else if (fromPublish == true) {
+            activity?.supportFragmentManager?.setFragmentResult(
+                "fragment-callback2", bundleOf(
+                    "data" to data,
+                    ARG_SERIALIZABLE to events
+                )
+            )
+            findNavController().navigate(R.id.action_addMembersFragment_to_membersPublish)
         }
     }
 }

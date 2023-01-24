@@ -11,11 +11,16 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.haystackevents.app.`in`.R
 import com.yalantis.ucrop.util.FileUtils.*
@@ -27,7 +32,16 @@ import java.util.*
 object Extensions {
 
 
-
+    fun showSnackBarTop(view: View, context: Context, message: String) {
+        val snackBarView = Snackbar.make(view, message , Snackbar.LENGTH_LONG)
+        val mView = snackBarView.view
+        val params = view.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        //mView.layoutParams = params
+        //view.background = ContextCompat.getDrawable(context,R.drawable.custom_drawable) // for custom background
+        snackBarView.animationMode = BaseTransientBottomBar.ANIMATION_MODE_FADE
+        snackBarView.show()
+    }
 
     fun showSnackBar(view: View?, message: String) =
         view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG).show() }
@@ -67,9 +81,8 @@ object Extensions {
         var convertDate: String? = null
         val sdf = SimpleDateFormat("dd MMM yyyy")
         try {
-
-            formattedDate = sdf.parse(date!!)
-            convertDate = SimpleDateFormat("MM-dd-yyyy").format(formattedDate!!)
+            formattedDate = date?.let { sdf.parse(it) }
+            convertDate = formattedDate?.let { SimpleDateFormat("mm-dd-yyyy").format(it) }
 
         }catch (e: Exception){e.printStackTrace()}
         return convertDate
@@ -210,4 +223,8 @@ object Extensions {
         }
         return null
     }
+
+    val constraintsBuilder =
+        CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now())
 }

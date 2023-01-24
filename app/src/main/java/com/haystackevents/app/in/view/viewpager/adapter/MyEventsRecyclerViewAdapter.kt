@@ -35,19 +35,19 @@ class MyEventsRecyclerViewAdapter(var context: Context)
             }
 
             binding.deleteGroup.setOnClickListener {
-                showConfirmationDialog(myEvents)
+                showConfirmationDialog(myEvents,adapterPosition)
             }
         }
     }
 
-    private fun showConfirmationDialog(myEvents: MyEventsData) {
+    private fun showConfirmationDialog(myEvents: MyEventsData, adapterPosition: Int) {
         val dialog = MaterialAlertDialogBuilder(context, R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
             .setTitle("Delete Event?")
             .setMessage("Are you sure want to delete this event.?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialogInterface, i ->
                 dialogInterface.dismiss()
-                eventsOnClick?.deleteMyEvent(myEvents)
+                eventsOnClick?.deleteMyEvent(myEvents,adapterPosition)
             }
             .setNegativeButton("No") { dialogInterface, i ->
                 dialogInterface.dismiss()
@@ -85,7 +85,7 @@ class MyEventsRecyclerViewAdapter(var context: Context)
 
     interface MyEventsOnClickListener{
         fun myEventsItemCLick(events: MyEventsData)
-        fun deleteMyEvent(events: MyEventsData)
+        fun deleteMyEvent(events: MyEventsData, adapterPosition: Int)
         fun editMyEvent(events: MyEventsData)
     }
 }

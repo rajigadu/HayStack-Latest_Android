@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,13 +23,14 @@ import com.haystackevents.app.`in`.network.response.states.States
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
 import com.haystackevents.app.`in`.utils.Extensions
 import com.haystackevents.app.`in`.utils.Extensions.longSnackBar
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ManualSearch: Fragment() {
 
-    private lateinit var binding: FragmentManualSearchBinding
+    private var binding: FragmentManualSearchBinding? = null
     private var selectedCountry: String? = "United States"
     private var listStates = arrayListOf<String>()
     private var searchEvent: SearchByEvent? = null
@@ -39,7 +38,6 @@ class ManualSearch: Fragment() {
 
     private var listCountries = arrayListOf<String>()
 
-    private var zipCode: String? = null
     private var selectedState = ""
 
 
@@ -47,9 +45,9 @@ class ManualSearch: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentManualSearchBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -60,7 +58,7 @@ class ManualSearch: Fragment() {
 
         searchEvent = arguments?.getSerializable(ARG_SERIALIZABLE) as SearchByEvent
         Log.e("TAG", "searchEvent: $searchEvent")
-        binding.inputCountry.setText(selectedCountry)
+        binding?.inputCountry?.setText(selectedCountry)
 
         clickListeners()
 
@@ -70,11 +68,11 @@ class ManualSearch: Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListeners() {
 
-        binding.toolbarManualSearch.setNavigationOnClickListener {
+        binding?.toolbarManualSearch?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnContinue.setOnClickListener {
+        binding?.btnContinue?.setOnClickListener {
             if (validated()){
                 getEventLatLong()
                 val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
@@ -82,7 +80,7 @@ class ManualSearch: Fragment() {
             }
         }
 
-        binding.inputCountry.setOnTouchListener { view, motionEvent ->
+        binding?.inputCountry?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -96,7 +94,7 @@ class ManualSearch: Fragment() {
             }
         }
 
-        binding.inputState.setOnTouchListener { view, motionEvent ->
+        binding?.inputState?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -112,32 +110,32 @@ class ManualSearch: Fragment() {
     }
 
     private fun validated(): Boolean {
-        searchEvent?.country = binding.inputCountry.text.toString().trim()
-        searchEvent?.state = binding.inputState.text.toString().trim()
-        searchEvent?.zipcode = binding.inputZipCode.text.toString().trim()
-        searchEvent?.city = binding.inputCity.text.toString().trim()
-
+        searchEvent?.country = binding?.inputCountry?.text.toString().trim()
+        searchEvent?.state = binding?.inputState?.text.toString().trim()
+        searchEvent?.zipcode = binding?.inputZipCode?.text.toString().trim()
+        searchEvent?.city = binding?.inputCity?.text?.toString()?.trim()
+        searchEvent?.address = binding?.inputAddress?.text?.toString()?.trim()
 
         when {
-            searchEvent?.country!!.isEmpty() -> {
-                longSnackBar("Select Your Country", binding.constraintManualSearch)
+            searchEvent?.country?.isEmpty() == true -> {
+                longSnackBar("Select Your Country", binding?.constraintManualSearch)
                 return false
             }
 
-            searchEvent?.state!!.isEmpty() -> {
-                longSnackBar("Select Your State", binding.constraintManualSearch)
+            searchEvent?.state?.isEmpty() == true -> {
+                longSnackBar("Select Your State", binding?.constraintManualSearch)
                 return false
             }
 
-            searchEvent?.city!!.isEmpty() -> {
-                longSnackBar("Enter Your City", binding.constraintManualSearch)
-                return false
-            }
-
-            searchEvent?.zipcode!!.isEmpty() -> {
-                longSnackBar("Enter Zip code", binding.constraintManualSearch)
-                return false
-            }
+//            searchEvent?.city?.isEmpty() == true -> {
+//                longSnackBar("Enter Your City", binding?.constraintManualSearch)
+//                return false
+//            }
+//
+//            searchEvent?.zipcode?.isEmpty() == true -> {
+//                longSnackBar("Enter Zip code", binding?.constraintManualSearch)
+//                return false
+//            }
 
             else -> return true
         }
@@ -152,7 +150,7 @@ class ManualSearch: Fragment() {
             .setTitle("Select Event State")
             .setCancelable(false)
             .setPositiveButton("Ok"){ dialog, which ->
-                binding.inputState.setText(selectedState)
+                binding?.inputState?.setText(selectedState)
             }
             .setSingleChoiceItems(array,-1){ dialog, which ->
                 selectedState = array[which]
@@ -161,6 +159,7 @@ class ManualSearch: Fragment() {
     }
 
     private fun getCountriesList() {
+        context?.let { ProgressCaller.showProgressDialog(it) }
         Repository.getAllCountries().enqueue(object : Callback<Countries>{
             override fun onResponse(call: Call<Countries>, response: Response<Countries>) {
                 try {
@@ -175,12 +174,14 @@ class ManualSearch: Fragment() {
                             }
                         }
                     }
+                    ProgressCaller.hideProgressDialog()
 
                 }catch (e: Exception){e.printStackTrace()}
             }
 
             override fun onFailure(call: Call<Countries>, t: Throwable) {
-                Extensions.showErrorResponse(t, binding.constraintManualSearch)
+                Extensions.showErrorResponse(t, binding?.constraintManualSearch)
+                ProgressCaller.hideProgressDialog()
             }
 
         })
@@ -194,8 +195,11 @@ class ManualSearch: Fragment() {
             .setTitle("Select Event Country")
             .setCancelable(false)
             .setPositiveButton("Ok"){ dialog, which ->
+                context?.let { ProgressCaller.showProgressDialog(it) }
                 getStatesList()
-                binding.inputCountry.setText(selectedCountry)
+                binding?.inputCountry?.setText(selectedCountry)
+                binding?.inputState?.setText("")
+                selectedState = ""
             }
             .setSingleChoiceItems(array,-1){ dialog, which ->
                 selectedCountry = array[which]
@@ -204,7 +208,6 @@ class ManualSearch: Fragment() {
     }
 
     private fun getStatesList() {
-        binding.progressCardView.visibility = VISIBLE
         Repository.getAllStatesOfTheCountry(selectedCountry!!).enqueue(
             object : Callback<States> {
                 override fun onResponse(call: Call<States>, response: Response<States>) {
@@ -222,12 +225,12 @@ class ManualSearch: Fragment() {
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    binding.progressCardView.visibility = INVISIBLE
+                    ProgressCaller.hideProgressDialog()
                 }
 
                 override fun onFailure(call: Call<States>, t: Throwable) {
-                    Extensions.showErrorResponse(t, binding.constraintManualSearch)
-                    binding.progressCardView.visibility = INVISIBLE
+                    Extensions.showErrorResponse(t, binding?.constraintManualSearch)
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })
@@ -235,7 +238,7 @@ class ManualSearch: Fragment() {
 
     private fun getEventLatLong() {
         val geoCoder = Geocoder(requireContext())
-        var listAddress = listOf<Address>()
+        val listAddress: List<Address>
         val locationName = searchEvent?.city + "," + searchEvent?.city + "," + searchEvent?.state +
                 "," + searchEvent?.zipcode
 

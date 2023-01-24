@@ -17,7 +17,7 @@ import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 class CreateEventMode: Fragment() {
 
 
-    private lateinit var binding: FragmentCreateEventModeBinding
+    private var binding: FragmentCreateEventModeBinding? = null
     private var advertiseEvent: String = "Public"
     private var hostContactInfo: String = "Public"
     private var events: Event? = null
@@ -27,9 +27,9 @@ class CreateEventMode: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentCreateEventModeBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -39,15 +39,15 @@ class CreateEventMode: Fragment() {
         events = arguments?.getSerializable(ARG_SERIALIZABLE) as Event
         Log.e("TAG", "events: $events")
 
-        binding.toolbarEventMode.setNavigationOnClickListener {
+        binding?.toolbarEventMode?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnContinue.setOnClickListener {
+        binding?.btnContinue?.setOnClickListener {
 
-            val checkedAdvertiseEventId = binding.advertiseEventGroup.checkedRadioButtonId
+            val checkedAdvertiseEventId = binding?.advertiseEventGroup?.checkedRadioButtonId
             findAdvertiseEvent(checkedAdvertiseEventId)
-            val checkedHostContactInfoId = binding.hostContactInfoGroup.checkedRadioButtonId
+            val checkedHostContactInfoId = binding?.hostContactInfoGroup?.checkedRadioButtonId
             findHostContactInfo(checkedHostContactInfoId)
 
             if (advertiseEvent.isEmpty() || hostContactInfo.isEmpty()){
@@ -55,17 +55,20 @@ class CreateEventMode: Fragment() {
             }
             events?.eventtype = advertiseEvent
             events?.hosttype = hostContactInfo
-            val bundle = bundleOf(ARG_SERIALIZABLE to events)
+            val bundle = bundleOf(
+                ARG_SERIALIZABLE to events,
+                "flow" to "1"
+            )
             findNavController().navigate(R.id.action_createEventMode_to_addMembersFragment, bundle)
         }
 
-        binding.toolbarEventMode.setNavigationOnClickListener {
+        binding?.toolbarEventMode?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
     }
 
-    private fun findAdvertiseEvent(checkedId: Int) {
+    private fun findAdvertiseEvent(checkedId: Int?) {
         when(checkedId){
             R.id.advertisePublic -> {
                 advertiseEvent = "Public"
@@ -76,7 +79,7 @@ class CreateEventMode: Fragment() {
         }
     }
 
-    private fun findHostContactInfo(checkedId: Int) {
+    private fun findHostContactInfo(checkedId: Int?) {
         when(checkedId){
             R.id.hostContactPublic -> {
                 hostContactInfo = "Public"

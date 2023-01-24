@@ -40,15 +40,15 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/shapeableImageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_marginEnd="@dimen/marginMedium"
                     android:layout_marginTop="@dimen/marginMedium"
                     android:scaleType="fitXY"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:shapeAppearance="@style/CircleImageView"
-                    app:srcCompat="@drawable/app_logo" />
+                    app:srcCompat="@drawable/playstore" />
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/searchView"

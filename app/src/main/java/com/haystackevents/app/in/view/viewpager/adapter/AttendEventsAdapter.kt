@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View.INVISIBLE
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.haystackevents.app.`in`.R
@@ -24,7 +25,8 @@ class AttendEventsAdapter(var context: Context)
     inner class ViewHolder(val binding: LayoutGroupsListItemViewBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bindView(attendEvent: AttendEventsData) {
-            binding.deleteGroup.visibility = INVISIBLE
+            binding.editEventGroup.isVisible = false
+            //binding.deleteGroup.visibility = INVISIBLE
             binding.eventName.text = attendEvent.event_name
 
             binding.deleteGroup.setOnClickListener {

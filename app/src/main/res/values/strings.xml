@@ -122,4 +122,6 @@
     <string name="individual">Individual</string>
     <string name="company">Company/Small Business</string>
     <string name="confirm_new_password">Confirm New Password</string>
+    <string name="invite_users">Invite Users</string>
+    <string name="enter_address">Enter Address</string>
 </resources>

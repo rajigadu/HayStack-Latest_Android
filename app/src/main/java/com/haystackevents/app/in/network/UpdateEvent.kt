@@ -4,7 +4,7 @@ data class UpdateEvent(
     var event_name: String,
     var streetaddress: String,
     var city: String,
-    var id: String,
+    var id: String?,
     var state: String,
     var zipcode: String,
     var startDate: String,

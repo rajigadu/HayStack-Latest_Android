@@ -1,12 +1,9 @@
 package com.haystackevents.app.`in`.view.viewpager
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +21,7 @@ import com.haystackevents.app.`in`.utils.Extensions.getCurrentDate
 import com.haystackevents.app.`in`.utils.Extensions.longSnackBar
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.Extensions.showErrorResponse
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.viewpager.adapter.InterestEventsAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,7 +29,7 @@ import retrofit2.Response
 
 class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEventsItemClick {
 
-    private lateinit var binding: FragmentMyEventsBinding
+    private var binding: FragmentMyEventsBinding? = null
     private lateinit var interestEventsAdapter: InterestEventsAdapter
     private lateinit var bottomSheet: BottomSheetDialog
     private var currentDate: String? = null
@@ -43,9 +41,9 @@ class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEvent
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentMyEventsBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -53,15 +51,15 @@ class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEvent
         super.onViewCreated(view, savedInstanceState)
 
         interestEventsAdapter = InterestEventsAdapter(requireContext())
-        binding.recyclerMyEvents.apply {
+        binding?.recyclerMyEvents?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = interestEventsAdapter
         }
 
-        binding.refreshMyEvents.setColorSchemeColors(ContextCompat.getColor(requireContext(),
+        binding?.refreshMyEvents?.setColorSchemeColors(ContextCompat.getColor(requireContext(),
             R.color.colorPrimary))
 
-        binding.refreshMyEvents.setOnRefreshListener {
+        binding?.refreshMyEvents?.setOnRefreshListener {
             listInterestEvents.clear()
             interestEvents()
         }
@@ -69,8 +67,9 @@ class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEvent
     }
 
     private fun interestEvents() {
-        binding.refreshMyEvents.isRefreshing = true
+        binding?.refreshMyEvents?.isRefreshing = true
         currentDate = getCurrentDate()
+        endTime = Extensions.getCurrentTime()
         Repository.getInterestEvents(currentDate!!, endTime!!).enqueue(
             object : Callback<InterestEvents>{
                 override fun onResponse(
@@ -82,28 +81,28 @@ class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEvent
 
                         if (response.isSuccessful){
                             if (response.body()?.status == "1"){
-                                binding.noEventsImage.visibility = View.INVISIBLE
-                                binding.noEventsText.visibility = View.INVISIBLE
+                                binding?.noEventsImage?.visibility = View.INVISIBLE
+                                binding?.noEventsText?.visibility = View.INVISIBLE
 
                                 if (response.body()?.data != null) {
                                     listInterestEvents.clear()
-                                    listInterestEvents.addAll(listOf(response.body()?.data!!))
+                                    listInterestEvents.addAll(response.body()?.data!!)
                                     interestEventsAdapter.update(listInterestEvents, this@InterestsEventsFragment)
                                 }
                             }else{
-                                binding.noEventsImage.visibility = View.VISIBLE
-                                binding.noEventsText.visibility = View.VISIBLE
-                                longSnackBar(response.body()?.message!!, binding.constraintMyEvents)
+                                binding?.noEventsImage?.visibility = View.VISIBLE
+                                binding?.noEventsText?.visibility = View.VISIBLE
+                                longSnackBar(response.body()?.message!!, binding?.constraintMyEvents)
                             }
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    binding.refreshMyEvents.isRefreshing = false
+                    binding?.refreshMyEvents?.isRefreshing = false
                 }
 
                 override fun onFailure(call: Call<InterestEvents>, t: Throwable) {
-                    showErrorResponse(t, binding.constraintMyEvents)
-                    binding.refreshMyEvents.isRefreshing = false
+                    showErrorResponse(t, binding?.constraintMyEvents)
+                    binding?.refreshMyEvents?.isRefreshing = false
                 }
 
             })
@@ -116,7 +115,7 @@ class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEvent
     }
 
     override fun deleteInterestedEvent(interestEvent: InterestEventsData) {
-        showBottomSheet()
+        context?.let { ProgressCaller.showProgressDialog(it) }
         Repository.deleteOtherEvents(interestEvent.id, SessionManager.instance.getUserId(),
             AppConstants.EVENT_TYPE_INTEREST)
             .enqueue(object : Callback<DefaultResponse>{
@@ -144,38 +143,14 @@ class InterestsEventsFragment: Fragment(), InterestEventsAdapter.InterestedEvent
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    hideBottomSheet()
+                    ProgressCaller.hideProgressDialog()
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    Extensions.showSnackBar(binding.constraintMyEvents, "something went wrong")
-                    hideBottomSheet()
+                    Extensions.showSnackBar(binding?.constraintMyEvents, "something went wrong")
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })
     }
-
-    @SuppressLint("SetTextI18n")
-    private fun showBottomSheet(){
-        bottomSheet = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-        val view = LayoutInflater.from(requireContext().applicationContext)
-            .inflate(
-                R.layout.authentication_progress_bottom_sheet,
-                requireActivity().findViewById<ConstraintLayout>(R.id.bottom_sheet)
-            )
-        val title = view.findViewById<TextView>(R.id.progress_title)
-        val subtitle = view.findViewById<TextView>(R.id.progress_sub_title)
-
-        title.text = "Deleting Event"
-        subtitle.text = "Deleting event, please wait...."
-
-        bottomSheet.setCancelable(false)
-        bottomSheet.setContentView(view)
-        bottomSheet.show()
-    }
-
-    private  fun hideBottomSheet(){
-        bottomSheet.hide()
-    }
-
 }

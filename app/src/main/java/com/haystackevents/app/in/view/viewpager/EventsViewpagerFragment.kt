@@ -15,7 +15,7 @@ import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 
 class EventsViewpagerFragment: Fragment() {
 
-    private lateinit var binding: FragmentEventsBinding
+    private var binding: FragmentEventsBinding? = null
     private var tabTitles = arrayOf("My Events", "Interests", "Attend", "Invited")
     private lateinit var viewPagerAdapter: EventsViewPagerAdapter
 
@@ -26,9 +26,9 @@ class EventsViewpagerFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentEventsBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -36,7 +36,14 @@ class EventsViewpagerFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         currentPosition = arguments?.getInt(ARG_OBJECTS)
-        Log.e("TAG", "currentPosition: $currentPosition")
+        activity?.supportFragmentManager?.setFragmentResultListener(
+            "fragment-edit-events-callback", viewLifecycleOwner
+        ) { key, bundle ->
+            if (key == "fragment-edit-events-callback") {
+                currentPosition = bundle.getInt(ARG_OBJECTS)
+            }
+        }
+        //Log.e("TAG", "currentPosition: $currentPosition")
 
         viewPagerAdapter = EventsViewPagerAdapter(requireActivity())
         viewPagerAdapter.addFragment(MyEventsFragment())
@@ -44,17 +51,21 @@ class EventsViewpagerFragment: Fragment() {
         viewPagerAdapter.addFragment(AttendEventsFragment())
         viewPagerAdapter.addFragment(InvitedEventsFragment())
 
-        binding.myBookingViewPager.adapter = viewPagerAdapter
-        binding.myBookingViewPager.post {
-            binding.myBookingViewPager.setCurrentItem(currentPosition!!, true)
+        binding?.myBookingViewPager?.adapter = viewPagerAdapter
+        binding?.myBookingViewPager?.post {
+            binding?.myBookingViewPager?.setCurrentItem(currentPosition!!, true)
         }
 
-        TabLayoutMediator(binding.myEventsTabs, binding.myBookingViewPager) { tab, position ->
-            tab.text = tabTitles[position]
-            binding.myBookingViewPager.setCurrentItem(tab.position, true)
-        }.attach()
+        binding?.myEventsTabs?.let {
+            binding?.myBookingViewPager?.let { it1 ->
+                TabLayoutMediator(it, it1) { tab, position ->
+                    tab.text = tabTitles[position]
+                    binding?.myBookingViewPager?.setCurrentItem(tab.position, true)
+                }.attach()
+            }
+        }
 
-        binding.toolbarMyEvents.setNavigationOnClickListener {
+        binding?.toolbarMyEvents?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
     }

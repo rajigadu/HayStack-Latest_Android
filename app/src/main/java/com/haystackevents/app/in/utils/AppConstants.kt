@@ -22,6 +22,8 @@ object AppConstants {
     const val L_NAME = "last-name"
     const val USER_NAME = "user-name"
     const val GOVT_EMAIL = "govt-email"
+    const val EMAIL = "email"
+    const val MOBILE = "mobile"
     const val DOD_ID = "dod-id"
     const val UID = "uid"
     const val USER_LATITUDE = "user-latitude"
@@ -34,9 +36,17 @@ object AppConstants {
     const val MEMBER_ID = "member-id"
     const val STATUS = "status"
     const val FROM_ADD_MEMBERS_FRAGMENT = "add-members"
+    const val FROM_ADD_MEMBERS_PUBLISH_FRAGMENT = "members-publish"
 
     const val EVENT_TYPE_ATTEND = "attend"
     const val EVENT_TYPE_INTEREST = "interest"
-    const val EVENT_TYPE_INVITED = "invited"
+    const val EVENT_TYPE_INVITED = "invite"
+
+    object EventTypes {
+        const val SEARCH_EVENT = "Event Search"
+        const val MY_EVENT = "My Events"
+        const val NEAREST_EVENT = "Nearest Events"
+        const val NEAR_EVENT = "Near Events"
+    }
 
 }

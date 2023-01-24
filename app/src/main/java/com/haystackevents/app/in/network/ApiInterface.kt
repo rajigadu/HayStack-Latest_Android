@@ -131,7 +131,7 @@ interface ApiInterface {
     @POST(ADD_MEMBER_GROUP)
     fun addMemberToGroup(
         @Field("groupid") groupId: String,
-        @Field("id") hostId: String,
+        @Field("id") hostId: String?,
         @Field("member") memberName: String,
         @Field("number") number: String,
         @Field("email") email: String
@@ -149,7 +149,7 @@ interface ApiInterface {
         @Field("gname") groupName: String,
         @Field("gdesc") groupDesc: String,
         @Field("groupid") groupId: String,
-        @Field("id") userId: String
+        @Field("id") userId: String?
     ): Call<DefaultResponse>
 
     @FormUrlEncoded
@@ -165,7 +165,7 @@ interface ApiInterface {
     @POST(GROUP_MEMBERS)
     fun getGroupMembers(
         @Field("groupid") groupId: String,
-        @Field("id") userId: String
+        @Field("id") userId: String?
     ): Call<GroupMembers>
 
     @FormUrlEncoded
@@ -182,7 +182,7 @@ interface ApiInterface {
     @POST(DELETE_GROUP_MEMBER)
     fun deleteGroupMember(
         @Field("groupid") groupId: String,
-        @Field("userid") userId: String,
+        @Field("userid") userId: String?,
         @Field("memberid") memberId: String
     ): Call<DefaultResponse>
 
@@ -209,7 +209,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST(MY_EVENTS)
     fun myEvents(
-        @Field("id") userId: String,
+        @Field("id") userId: String?,
         @Field("currentdate") currentDate: String,
         @Field("endtime") endTime: String?
     ): Call<MyEvents>
@@ -217,7 +217,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST(LIST_ATTEND_EVENTS)
     fun attendEvents(
-        @Field("id") userId: String,
+        @Field("id") userId: String?,
         @Field("currentdate") currentDate: String,
         @Field("endtime") endtime: String?,
     ): Call<AttendEvents>
@@ -225,7 +225,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST(LIST_INVITED_EVENTS)
     fun invitedEvents(
-        @Field("id") userId: String,
+        @Field("id") userId: String?,
         @Field("currentdate") currentDate: String,
         @Field("endtime") endtime: String?,
     ): Call<InvitedEvents>
@@ -234,7 +234,7 @@ interface ApiInterface {
     @POST(ADD_ATTEND_EVENTS)
     fun addAttendEvents(
         @Field("eventid") eventId: String,
-        @Field("id") userId: String,
+        @Field("id") userId: String?,
         @Field("userid") hostId: String?,
     ): Call<AddAttendEvent>
 
@@ -242,7 +242,7 @@ interface ApiInterface {
     @POST(ADD_INTEREST_EVENTS)
     fun addInterestEvents(
         @Field("eventid") eventId: String,
-        @Field("id") hostId: String,
+        @Field("id") hostId: String?,
         @Field("userid") userId: String?,
     ): Call<AddInterestEvents>
 
@@ -278,12 +278,13 @@ interface ApiInterface {
         @Field("longitude") longitude: String?,
         @Field("category") category: String?,
         @Field("zip") zipcode: String?,
+        @Field("address") address: String?,
     ): Call<SearchEvents>
 
     @FormUrlEncoded
     @POST(LIST_INTEREST_EVENTS)
     fun interestEvents(
-        @Field("id") userId: String,
+        @Field("id") userId: String?,
         @Field("currentdate") currentDate: String,
         @Field("endtime") endtime: String?,
     ): Call<InterestEvents>
@@ -316,20 +317,20 @@ interface ApiInterface {
     @POST(DELETE_MY_EVENTS)
     fun deleteMyEvents(
         @Field("eventid") eventId: String,
-        @Field("id") userId: String
+        @Field("id") userId: String?
     ): Call<DefaultResponse>
 
     @FormUrlEncoded
     @POST(DELETE_OTHER_EVENTS)
     fun deleteOtherEvents(
         @Field("eventid") eventId: String,
-        @Field("id") userId: String,
+        @Field("id") userId: String?,
         @Field("type") eventType: String
     ): Call<DefaultResponse>
 
     @GET(REFFER_FRIEND)
     fun referFriend(
-        @Query("id") id: String,
+        @Query("id") id: String?,
         @Query("name") name: String,
         @Query("email") email: String,
         @Query("number") number: String

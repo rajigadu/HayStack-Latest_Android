@@ -83,18 +83,18 @@ object Repository {
 
     fun getAllGroupsList(id: String): Call<AllGroups> = client.getAllGroups(id)
 
-    fun editGroup(groupName: String, groupDesc: String, groupId: String, userId: String): Call<DefaultResponse> =
+    fun editGroup(groupName: String, groupDesc: String, groupId: String, userId: String?): Call<DefaultResponse> =
         client.editGroup(groupName, groupDesc, groupId, userId)
 
-    fun addMemberToGroup(groupId: String, userId: String, member: String, number: String, email: String):
+    fun addMemberToGroup(groupId: String, userId: String?, member: String, number: String, email: String):
             Call<DefaultResponse> = client.addMemberToGroup(groupId, userId, member, number, email)
 
-    fun getGroupMembers(groupId: String, userId: String): Call<GroupMembers> = client.getGroupMembers(groupId, userId)
+    fun getGroupMembers(groupId: String, userId: String?): Call<GroupMembers> = client.getGroupMembers(groupId, userId)
 
     fun editGroupMember(groupId: String, member: String, number: String, email: String, memberId: String) =
         client.editGroupMember(groupId, member, number, email, memberId)
 
-    fun deleteGroupMember(groupId: String, memberId: String, userId: String): Call<DefaultResponse> =
+    fun deleteGroupMember(groupId: String, memberId: String, userId: String?): Call<DefaultResponse> =
         client.deleteGroupMember(groupId, userId, memberId)
 
     fun deleteGroup(groupId: String, userId: String): Call< DefaultResponse> = client.deleteGroup(groupId, userId)
@@ -264,20 +264,20 @@ object Repository {
             searchType, currentDate, endTime)
     }
 
-    fun searchEvent(searchEvents: SearchByEvent): Call<SearchEvents> {
+    fun searchEvent(searchEvents: SearchByEvent?): Call<SearchEvents> {
         val userId = SessionManager.instance.getUserId()
         return client.searchEvents(userId,
-            searchEvents.searchType!!, searchEvents.country!!, searchEvents.state!!,
-        searchEvents.city!!, searchEvents.startDate, searchEvents.endDate, searchEvents.startTime,
-        searchEvents.endTime, searchEvents.distanceMile, searchEvents.nationWide, searchEvents.latitude,
-            searchEvents.longitude, searchEvents.category, searchEvents.zipcode)
+            searchEvents?.searchType, searchEvents?.country, searchEvents?.state,
+        searchEvents?.city, searchEvents?.startDate, searchEvents?.endDate, searchEvents?.startTime,
+        searchEvents?.endTime, searchEvents?.distanceMile, searchEvents?.nationWide, searchEvents?.latitude,
+            searchEvents?.longitude, searchEvents?.category, searchEvents?.zipcode, searchEvents?.address)
     }
 
     fun eventAddToInterested(eventId: String, hostId: String): Call<AddInterestEvents> = client.addInterestEvents(
-        eventId, hostId, SessionManager.instance.getUserId())
+        eventId, SessionManager.instance.getUserId(), hostId)
 
     fun eventAddToAttend(eventId: String, hostId: String): Call<AddAttendEvent> = client.addAttendEvents(
-        eventId, hostId, SessionManager.instance.getUserId())
+        eventId, SessionManager.instance.getUserId(), hostId)
 
     fun getNearEvents(nearEvents: GetNearEvents): Call<NearEvents> = client.nearEvents(
         nearEvents.currentDate, nearEvents.distanceInMile, nearEvents.searchType,
@@ -285,11 +285,11 @@ object Repository {
         nearEvents.id, nearEvents.nationWide
     )
 
-    fun deleteMyEvents(eventId: String, userId: String): Call<DefaultResponse> = client.deleteMyEvents(eventId, userId)
+    fun deleteMyEvents(eventId: String, userId: String?): Call<DefaultResponse> = client.deleteMyEvents(eventId, userId)
 
-    fun deleteOtherEvents(eventId: String, userId: String, eventType: String): Call<DefaultResponse> =
+    fun deleteOtherEvents(eventId: String, userId: String?, eventType: String): Call<DefaultResponse> =
         client.deleteOtherEvents(eventId, userId, eventType)
 
-    fun referFriendNow(id: String, name: String, email: String, number: String):
+    fun referFriendNow(id: String?, name: String, email: String, number: String):
             Call<DefaultResponse> = client.referFriend(id,name,email,number)
 }

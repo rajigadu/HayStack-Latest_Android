@@ -10,6 +10,7 @@ data class Data(
     val member: String,
     val number: String,
     val status: String,
+    val message: String,
     val userid: String
 ): Serializable {
-    constructor():this("","","", "","", "", "","")}
+    constructor():this("","","", "","", "", "","","")}

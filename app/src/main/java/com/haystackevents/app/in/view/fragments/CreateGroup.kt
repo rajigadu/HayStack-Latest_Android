@@ -22,9 +22,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.haystackevents.app.`in`.R
 import com.haystackevents.app.`in`.databinding.FragmentCreateGroupBinding
 import com.haystackevents.app.`in`.manager.SessionManager
+import com.haystackevents.app.`in`.network.ContactInfo
 import com.haystackevents.app.`in`.network.repository.Repository
 import com.haystackevents.app.`in`.network.response.create_group.Group
 import com.haystackevents.app.`in`.network.response.group_members.DefaultResponse
+import com.haystackevents.app.`in`.utils.AppUtils
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.Extensions.showSnackBar
@@ -36,7 +38,7 @@ import retrofit2.Response
 
 class CreateGroup: Fragment() {
 
-    private lateinit var binding: FragmentCreateGroupBinding
+    private var binding: FragmentCreateGroupBinding? = null
 
     private var groupName: String? = null
     private var groupDesc: String? = null
@@ -49,9 +51,9 @@ class CreateGroup: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentCreateGroupBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -59,27 +61,27 @@ class CreateGroup: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarCreateGroup.setNavigationOnClickListener {
+        binding?.toolbarCreateGroup?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.constraintCreateGroup.setOnTouchListener { view, motionEvent ->
+        binding?.constraintCreateGroup?.setOnTouchListener { view, motionEvent ->
             when(motionEvent.action){
                 KeyEvent.ACTION_UP ->{
-                    binding.constraintCreateGroup.hideKeyboard()
+                    binding?.constraintCreateGroup?.hideKeyboard()
                     return@setOnTouchListener true
                 }
             }
             return@setOnTouchListener  false
         }
 
-        binding.btnCreateNewGroup.setOnClickListener {
+        binding?.btnCreateNewGroup?.setOnClickListener {
             if (validated()){
                 addNewGroup()
             }
         }
 
-        binding.btnAddressBook.setOnClickListener {
+        binding?.btnAddressBook?.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.READ_CONTACTS
@@ -97,7 +99,7 @@ class CreateGroup: Fragment() {
         ActivityResultContracts.RequestPermission()) { granted ->
 
         if (granted) {
-            val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             readContactActivityResult.launch(intent)
         }
     }
@@ -106,45 +108,54 @@ class CreateGroup: Fragment() {
         ActivityResultContracts.StartActivityForResult()) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
-
-            try {
-
-                val uriContactData: Uri = result.data?.data!!
-
-                val c: Cursor = requireActivity().contentResolver.query(
-                    uriContactData,
-                    null, null, null, null
-                )!!
-
-                var number = ""
-
-                if (c.count >= 1) {
-                    if (c.moveToFirst()) {
-                        val id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
-                        val hasPhone = c.getString(c.getColumnIndex(
+            if (result.resultCode == Activity.RESULT_OK) {
+                try {
+                    val uriContactData: Uri? = result.data?.data
+                    val cursor: Cursor? = uriContactData?.let {
+                        activity?.contentResolver?.query(
+                            it,
+                            null, null, null, null
+                        )
+                    }
+                    var number: String? = ""
+                    if (cursor?.moveToFirst() == true) {
+                        val id = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
+                        val hasPhone = cursor.getString(cursor.getColumnIndex(
                             ContactsContract.Contacts.HAS_PHONE_NUMBER))
 
                         if (hasPhone.equals("1", true)) {
-                            val phones: Cursor = requireActivity().contentResolver.query(
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                            val phones: Cursor? = activity?.contentResolver?.query(
+                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                null,
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
                                 null, null
-                            )!!
-                            phones.moveToFirst()
-                            number = phones.getString(phones.getColumnIndex("data1"))
+                            )
+                            phones?.moveToFirst()
+                            number = phones?.getString(phones.getColumnIndex("data1"))
                         }
-                        val name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                        val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
 
-                        binding.inputName.setText(name)
-                        binding.inputMobile.setText(number)
+                        binding?.inputName?.setText(name)
+                        binding?.inputMobile?.setText(number)
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("TAG", "exception: ${e.message}")
                 }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("TAG", "exception: ${e.message}")
             }
         }
+
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val contactInfo = activity?.let {
+//                AppUtils.getContactInfo(it, result?.data?.data)
+//            }
+//            updateValuesFromContacts(contactInfo)
+//        }
+    }
+
+    private fun updateValuesFromContacts(contactInfo: ContactInfo?) {
+        binding?.inputName?.setText(contactInfo?.firstName)
+        binding?.inputMobile?.setText(contactInfo?.mobilePhoneNumber)
     }
 
     private fun addNewGroup() {
@@ -169,7 +180,7 @@ class CreateGroup: Fragment() {
             }
 
             override fun onFailure(call: Call<Group>, t: Throwable) {
-                showSnackBar(binding.constraintCreateGroup, t.localizedMessage!!)
+                showSnackBar(binding?.constraintCreateGroup, t.localizedMessage!!)
                 ProgressCaller.hideProgressDialog()
             }
 
@@ -194,7 +205,7 @@ class CreateGroup: Fragment() {
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    showSnackBar(binding.constraintCreateGroup, t.localizedMessage!!)
+                    showSnackBar(binding?.constraintCreateGroup, t.localizedMessage!!)
                     ProgressCaller.hideProgressDialog()
                 }
 
@@ -218,36 +229,36 @@ class CreateGroup: Fragment() {
     }
 
     private fun validated(): Boolean {
-        groupName = binding.inputGroupName.text.toString().trim()
-        groupDesc = binding.inputGroupDesc.text.toString().trim()
-        memberName = binding.inputName.text.toString().trim()
-        memberEmail = binding.inputEmail.text.toString().trim()
-        memberMobile = binding.inputMobile.text.toString().trim()
+        groupName = binding?.inputGroupName?.text.toString().trim()
+        groupDesc = binding?.inputGroupDesc?.text.toString().trim()
+        memberName = binding?.inputName?.text.toString().trim()
+        memberEmail = binding?.inputEmail?.text.toString().trim()
+        memberMobile = binding?.inputMobile?.text.toString().trim()
 
         when {
             groupName!!.isEmpty() -> {
-                binding.inputGroupName.requestFocus()
-                binding.inputGroupName.error = "Enter Group Name"
+                binding?.inputGroupName?.requestFocus()
+                binding?.inputGroupName?.error = "Enter Group Name"
                 return false
             }
             groupDesc!!.isEmpty() -> {
-                binding.inputGroupDesc.requestFocus()
-                binding.inputGroupDesc.error = "Enter Group Description"
+                binding?.inputGroupDesc?.requestFocus()
+                binding?.inputGroupDesc?.error = "Enter Group Description"
                 return false
             }
             memberName!!.isEmpty() -> {
-                binding.inputName.requestFocus()
-                binding.inputName.error = "Enter Member Name"
+                binding?.inputName?.requestFocus()
+                binding?.inputName?.error = "Enter Member Name"
                 return false
             }
             memberEmail!!.isEmpty() -> {
-                binding.inputEmail.requestFocus()
-                binding.inputEmail.error = "Enter Member Email"
+                binding?.inputEmail?.requestFocus()
+                binding?.inputEmail?.error = "Enter Member Email"
                 return false
             }
             memberMobile!!.isEmpty() -> {
-                binding.inputMobile.requestFocus()
-                binding.inputMobile.error = "Enter Member Mobile"
+                binding?.inputMobile?.requestFocus()
+                binding?.inputMobile?.error = "Enter Member Mobile"
                 return false
             }
             else -> return true

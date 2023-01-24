@@ -25,10 +25,8 @@ import com.haystackevents.app.`in`.utils.AppConstants.REQ_CODE_VERSION_UPDATE
 
 class MainMenuActivity: AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainMenuBinding
+    private var binding: ActivityMainMenuBinding? = null
     private lateinit var navController: NavHostController
-    private var selectedId: Int? = null
-
     private lateinit var appUpdateManager: AppUpdateManager
     private var installStateUpdatedListener: InstallStateUpdatedListener? = null
 
@@ -37,31 +35,31 @@ class MainMenuActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
         navController = navHostFragment.findNavController() as NavHostController
         navController.navigateUp()
 
-        binding.navHome.setOnClickListener {
+        binding?.navHome?.setOnClickListener {
             navController.navigate(R.id.homeFragment)
         }
 
-        binding.navProfile.setOnClickListener {
+        binding?.navProfile?.setOnClickListener {
             navController.navigate(R.id.profile)
         }
 
-        binding.navRefer.setOnClickListener {
+        binding?.navRefer?.setOnClickListener {
             navController.navigate(R.id.referAFriend)
         }
 
-        binding.createEvent.setOnClickListener {
+        binding?.createEvent?.setOnClickListener {
             navController.navigate(R.id.createEvent)
         }
 
-        binding.navEvents.setOnClickListener {
+        binding?.navEvents?.setOnClickListener {
             navController.navigate(R.id.groupsFragment)
         }
 
@@ -71,49 +69,49 @@ class MainMenuActivity: AppCompatActivity() {
     fun updateBottomNavChange(position: Int){
         when(position){
             0 -> {
-                binding.navHome.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
-                binding.navProfile.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navRefer.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navEvents.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.createEvent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navHome?.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding?.navProfile?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navRefer?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navEvents?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.createEvent?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
             }
             1 -> {
-                binding.navHome.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navProfile.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navRefer.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navEvents.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
-                binding.createEvent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navHome?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navProfile?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navRefer?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navEvents?.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding?.createEvent?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
             }
             2 -> {
-                binding.navHome.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navProfile.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
-                binding.navRefer.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navEvents.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.createEvent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navHome?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navProfile?.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding?.navRefer?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navEvents?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.createEvent?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
             }
             3 -> {
-                binding.navHome.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navProfile.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navRefer.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
-                binding.navEvents.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.createEvent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navHome?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navProfile?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navRefer?.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding?.navEvents?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.createEvent?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
             }
             4 -> {
-                binding.navHome.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navProfile.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navRefer.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.navEvents.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
-                binding.createEvent.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary))
+                binding?.navHome?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navProfile?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navRefer?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.navEvents?.setColorFilter(ContextCompat.getColor(this, R.color.colorDefaultBottomNavIcon))
+                binding?.createEvent?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary))
             }
         }
     }
 
     fun hideBottomNav(){
-        binding.customBottomNavigation.visibility = GONE
+        binding?.customBottomNavigation?.visibility = GONE
     }
 
     fun showBottomNav(){
-        binding.customBottomNavigation.visibility = VISIBLE
+        binding?.customBottomNavigation?.visibility = VISIBLE
     }
 
     private fun checkAppUpdate(){
@@ -147,16 +145,18 @@ class MainMenuActivity: AppCompatActivity() {
     }
 
     private fun popupSnackBarForCompleteUpdateAndUnregister() {
-        val snackbar = Snackbar.make(
-            binding.constraintMain,
-            getString(R.string.update_downloaded),
-            Snackbar.LENGTH_INDEFINITE
-        )
-        snackbar.setAction(
+        val snackbar = binding?.constraintMain?.let {
+            Snackbar.make(
+                it,
+                getString(R.string.update_downloaded),
+                Snackbar.LENGTH_INDEFINITE
+            )
+        }
+        snackbar?.setAction(
             R.string.restart
         ) { appUpdateManager.completeUpdate() }
-        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-        snackbar.show()
+        snackbar?.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        snackbar?.show()
 
         unregisterInstallStateUpdListener()
     }

@@ -22,7 +22,7 @@ import retrofit2.Response
 class ForgotPasswordActivity: AppCompatActivity() {
 
 
-    private lateinit var binding: ActivityForgotPasswordBinding
+    private var binding: ActivityForgotPasswordBinding? = null
     private lateinit var bottomSheet: BottomSheetDialog
     private var email: String? = null
 
@@ -30,16 +30,16 @@ class ForgotPasswordActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
-        binding.signIn.setOnClickListener {
+        binding?.signIn?.setOnClickListener {
             startActivity(Intent(this, LogInActivity::class.java))
         }
 
-        binding.resetPassword.setOnClickListener {
-            email = binding.inputEditTextEmail.text.toString().trim()
+        binding?.resetPassword?.setOnClickListener {
+            email = binding?.inputEditTextEmail?.text.toString().trim()
             if (TextUtils.isEmpty(email)){
-                showSnackBar(binding.constraintForgotPassword, "Please enter registered email")
+                showSnackBar(binding?.constraintForgotPassword, "Please enter registered email")
                 return@setOnClickListener
             }
             sendRestPasswordLink()
@@ -68,7 +68,7 @@ class ForgotPasswordActivity: AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                showErrorResponse(t, binding.constraintForgotPassword)
+                showErrorResponse(t, binding?.constraintForgotPassword)
                 hideBottomSheet()
             }
 

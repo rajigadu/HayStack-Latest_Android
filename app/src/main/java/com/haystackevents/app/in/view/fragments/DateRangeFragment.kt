@@ -24,12 +24,13 @@ import com.haystackevents.app.`in`.utils.Extensions.getCurrentDate
 import com.haystackevents.app.`in`.utils.Extensions.getCurrentTime
 import com.haystackevents.app.`in`.utils.Extensions.longSnackBar
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DateRangeFragment: Fragment() {
 
 
-    private lateinit var binding: FragmentDateRangeBinding
+    private var binding: FragmentDateRangeBinding? = null
     private var searchEvent: SearchByEvent? = null
     private var lastClickTime: Long = 0
 
@@ -37,9 +38,9 @@ class DateRangeFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentDateRangeBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -56,25 +57,36 @@ class DateRangeFragment: Fragment() {
     }
 
     private fun setInitialValuesInEdittext() {
-        binding.inputStartDate.setText(getCurrentDate())
-        binding.inputEndDate.setText(getCurrentDate())
-        binding.inputStartTime.setText(getCurrentTime())
-        binding.inputEndTime.setText(getCurrentTime())
-
-        searchEvent?.startDate = binding.inputStartDate.text.toString().trim()
-        searchEvent?.endDate = binding.inputEndDate.text.toString().trim()
+        if (searchEvent?.startDate.isNullOrEmpty()) {
+            binding?.inputStartDate?.setText(getCurrentDate())
+            searchEvent?.startDate = binding?.inputStartDate?.text.toString().trim()
+        } else{
+            binding?.inputStartDate?.setText(searchEvent?.startDate)
+        }
+        if (searchEvent?.endDate.isNullOrEmpty()) {
+            binding?.inputEndDate?.setText(getCurrentDate())
+            searchEvent?.endDate = binding?.inputEndDate?.text.toString().trim()
+        }else {
+            binding?.inputEndDate?.setText(searchEvent?.endDate)
+        }
+        if (searchEvent?.startTime.isNullOrEmpty()) {
+            binding?.inputStartTime?.setText(getCurrentTime())
+        } else binding?.inputStartTime?.setText(searchEvent?.startTime)
+        if (searchEvent?.endTime.isNullOrEmpty()) {
+            binding?.inputEndTime?.setText(getCurrentTime())
+        } else binding?.inputEndTime?.setText(searchEvent?.endTime)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListeners() {
 
-        binding.toolbarDateRange.setNavigationOnClickListener {
+        binding?.toolbarDateRange?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnContinue.setOnClickListener {
-            searchEvent?.startTime = binding.inputStartTime.text.toString().trim()
-            searchEvent?.endTime = binding.inputEndTime.text.toString().trim()
+        binding?.btnContinue?.setOnClickListener {
+            searchEvent?.startTime = binding?.inputStartTime?.text.toString().trim()
+            searchEvent?.endTime = binding?.inputEndTime?.text.toString().trim()
 
             if (validated()){
                 val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
@@ -83,35 +95,35 @@ class DateRangeFragment: Fragment() {
 
         }
 
-        binding.inputStartTime.setOnTouchListener { view, motionEvent ->
+        binding?.inputStartTime?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
                         return@setOnTouchListener false
                     }
                     lastClickTime = SystemClock.elapsedRealtime()
-                    showTimePickerDialog("Select Event Start Time")
+                    showTimePickerDialog("Select Event Start Time", "start")
                     return@setOnTouchListener true
                 }
                 else -> return@setOnTouchListener false
             }
         }
 
-        binding.inputEndTime.setOnTouchListener { view, motionEvent ->
+        binding?.inputEndTime?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
                         return@setOnTouchListener false
                     }
                     lastClickTime = SystemClock.elapsedRealtime()
-                    showTimePickerDialog("Select Event End Time")
+                    showTimePickerDialog("Select Event End Time", "end")
                     return@setOnTouchListener true
                 }
                 else -> return@setOnTouchListener false
             }
         }
 
-        binding.inputStartDate.setOnTouchListener { view, motionEvent ->
+        binding?.inputStartDate?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -125,7 +137,7 @@ class DateRangeFragment: Fragment() {
             }
         }
 
-        binding.inputEndDate.setOnTouchListener { view, motionEvent ->
+        binding?.inputEndDate?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -142,20 +154,20 @@ class DateRangeFragment: Fragment() {
 
     private fun validated(): Boolean {
         when{
-            searchEvent?.startDate!!.isEmpty() -> {
-                longSnackBar("Please select start data", binding.constraintDateRange)
+            searchEvent?.startDate?.isEmpty() == true -> {
+                longSnackBar("Please select start data", binding?.constraintDateRange)
                 return false
             }
-            searchEvent?.startTime!!.isEmpty() -> {
-                longSnackBar("Please select start time", binding.constraintDateRange)
+            searchEvent?.startTime?.isEmpty() == true -> {
+                longSnackBar("Please select start time", binding?.constraintDateRange)
                 return false
             }
-            searchEvent?.endTime!!.isEmpty() -> {
-                longSnackBar("Please select end time", binding.constraintDateRange)
+            searchEvent?.endTime?.isEmpty() == true -> {
+                longSnackBar("Please select end time", binding?.constraintDateRange)
                 return false
             }
-            searchEvent?.endDate!!.isEmpty() -> {
-                longSnackBar("Please select end data", binding.constraintDateRange)
+            searchEvent?.endDate?.isEmpty() == true-> {
+                longSnackBar("Please select end data", binding?.constraintDateRange)
                 return false
             }
             else -> return true
@@ -167,7 +179,7 @@ class DateRangeFragment: Fragment() {
         (activity as MainMenuActivity).hideBottomNav()
     }
 
-    private fun showTimePickerDialog(timePickerTitle: String) {
+    private fun showTimePickerDialog(timePickerTitle: String, timeKey: String) {
         val timePicker = MaterialTimePicker.Builder()
             .setTheme(R.style.TimePickerTheme)
             .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -189,8 +201,13 @@ class DateRangeFragment: Fragment() {
 
             val selectedTime = "$hour:$minute $timeState"
 
-            searchEvent?.startTime = selectedTime
-            binding.inputStartTime.setText(selectedTime)
+            if (timeKey == "start") {
+                searchEvent?.startTime = selectedTime
+                binding?.inputStartTime?.setText(selectedTime)
+            } else if (timeKey == "end") {
+                searchEvent?.endTime = selectedTime
+                binding?.inputEndTime?.setText(selectedTime)
+            }
 
         }
         timePicker.addOnNegativeButtonClickListener {
@@ -200,10 +217,11 @@ class DateRangeFragment: Fragment() {
             context?.resources?.getString(R.string.time_picker))
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun showDatePickerDialog(datePickerTitle: String) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.DatePickerTheme)
-            //.setCalendarConstraints(constraintsBuilder.build())
+            .setCalendarConstraints(constraintsBuilder.build())
             .setTitleText(datePickerTitle)
             .build()
 
@@ -213,23 +231,16 @@ class DateRangeFragment: Fragment() {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
 
-            var month = calendar.get(Calendar.MONTH) + 1
+            val month = calendar.get(Calendar.MONTH)
             val year = calendar.get(Calendar.YEAR)
-            var day = calendar.get(Calendar.DAY_OF_MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            if (month < 10) month = "0$month".toInt()
-            if (day < 10) day = "0$day".toInt()
+            calendar.set(year,month, day)
+            val format = SimpleDateFormat("MM-dd-yyyy")
+            val strDate: String = format.format(calendar.time)
 
-            val selectedDate = "$month-$day-$year"
-
-            if (datePickerTitle == "Select Event Start Date") {
-                searchEvent?.startDate = selectedDate
-                binding.inputStartDate.setText(datePicker.headerText)
-            }else{
-                searchEvent?.endDate = selectedDate
-                binding.inputEndDate.setText(datePicker.headerText)
-            }
-
+            searchEvent?.startDate = strDate
+            binding?.inputStartDate?.setText(datePicker.headerText)
         }
 
         datePicker.addOnNegativeButtonClickListener {
@@ -246,6 +257,7 @@ class DateRangeFragment: Fragment() {
         CalendarConstraints.Builder()
             .setValidator(DateValidatorPointForward.now())
 
+    @SuppressLint("SimpleDateFormat")
     private fun selectEndDate(datePickerTitle: String) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.DatePickerTheme)
@@ -259,17 +271,16 @@ class DateRangeFragment: Fragment() {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
 
-            var month = calendar.get(Calendar.MONTH) + 1
+            val month = calendar.get(Calendar.MONTH)
             val year = calendar.get(Calendar.YEAR)
-            var day = calendar.get(Calendar.DAY_OF_MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            if (month < 10) month = "0$month".toInt()
-            if (day < 10) day = "0$day".toInt()
+            calendar.set(year,month, day)
+            val format = SimpleDateFormat("MM-dd-yyyy")
+            val strDate: String = format.format(calendar.time)
 
-            val selectedDate = "$month-$day-$year"
-
-            searchEvent?.endDate = selectedDate
-            binding.inputEndDate.setText(datePicker.headerText)
+            searchEvent?.endDate = strDate
+            binding?.inputEndDate?.setText(datePicker.headerText)
 
         }
 

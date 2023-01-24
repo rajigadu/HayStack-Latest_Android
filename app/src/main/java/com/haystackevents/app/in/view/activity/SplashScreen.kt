@@ -28,7 +28,7 @@ import com.haystackevents.app.`in`.manager.SessionManager
 
      private val mRunnable = Runnable {
          if (!isFinishing){
-             if (SessionManager.instance.getUserId().isNotEmpty()){
+             if (SessionManager.instance.getUserId()?.isNotEmpty() == true){
 
                  startActivity(Intent(this, MainMenuActivity::class.java))
                  finish()

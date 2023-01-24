@@ -12,6 +12,7 @@ import com.haystackevents.app.`in`.network.repository.Repository
 import com.haystackevents.app.`in`.network.response.group_members.DefaultResponse
 import com.haystackevents.app.`in`.utils.Extensions
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
+import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 import retrofit2.Call
@@ -20,7 +21,7 @@ import retrofit2.Response
 
 class ReferAFriend: Fragment() {
 
-    private lateinit var binding: FragmentReferFriendBinding
+    private var binding: FragmentReferFriendBinding? = null
     private var name: String? = null
     private var email: String? = null
     private var number: String? = null
@@ -30,37 +31,37 @@ class ReferAFriend: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentReferFriendBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnReferNow.setOnClickListener {
+        binding?.btnReferNow?.setOnClickListener {
             if (validate()) {
-                binding.constraintReferFriend.hideKeyboard()
+                binding?.constraintReferFriend?.hideKeyboard()
                 referFriendNow()
             }
         }
     }
 
     private fun validate(): Boolean {
-        name = binding.inputName.text.toString().trim()
-        email = binding.inputEmail.text.toString().trim()
-        number = binding.inputMobile.text.toString().trim()
+        name = binding?.inputName?.text.toString().trim()
+        email = binding?.inputEmail?.text.toString().trim()
+        number = binding?.inputMobile?.text.toString().trim()
 
         if (TextUtils.isEmpty(name)) {
-            binding.inputName.error = "Name Should not be empty"
+            binding?.inputName?.error = "Name Should not be empty"
             return false
         }
         if (TextUtils.isEmpty(number)) {
-            binding.inputMobile.error = "Mobile Number> Should not be empty"
+            binding?.inputMobile?.error = "Mobile Number> Should not be empty"
             return false
         }
         if (TextUtils.isEmpty(email)) {
-            binding.inputEmail.error = "Email Should not be empty"
+            binding?.inputEmail?.error = "Email Should not be empty"
             return false
         }
         return true
@@ -78,21 +79,28 @@ class ReferAFriend: Fragment() {
                 call: Call<DefaultResponse>,
                 response: Response<DefaultResponse>
             ) {
+                context?.let { context ->
+                    showAlertDialog(
+                        "Refer Your Friend",
+                        message = response.body()?.data?.message,
+                        context = context
+                    )
+                }
                 ProgressCaller.hideProgressDialog()
                 clearFields()
             }
 
             override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                Extensions.showSnackBar(binding.constraintReferFriend, t.localizedMessage!!)
+                Extensions.showSnackBar(binding?.constraintReferFriend, t.localizedMessage!!)
                 ProgressCaller.hideProgressDialog()
             }
         })
     }
 
     private fun clearFields() {
-        binding.inputName.setText("")
-        binding.inputEmail.setText("")
-        binding.inputMobile.setText("")
+        binding?.inputName?.setText("")
+        binding?.inputEmail?.setText("")
+        binding?.inputMobile?.setText("")
     }
 
     override fun onResume() {

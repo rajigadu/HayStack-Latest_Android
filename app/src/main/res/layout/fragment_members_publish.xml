@@ -42,14 +42,41 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPublish"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/lato_bold"
         android:padding="@dimen/padding12dp"
         android:text="@string/publish"
         android:textAllCaps="false"
-        android:layout_marginStart="@dimen/margin_24dp"
-        android:layout_marginEnd="@dimen/margin_24dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/btnInviteUsers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnInviteUsers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_5dp"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/invite_users"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnCancel"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@+id/btnPublish" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato_bold"
+        android:padding="@dimen/padding12dp"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnInviteUsers"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

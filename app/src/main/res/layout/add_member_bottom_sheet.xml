@@ -124,6 +124,8 @@
                 android:padding="@dimen/padding12dp"
                 android:text="@string/add_from_group"
                 android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="@+id/view3"
                 app:layout_constraintStart_toStartOf="@+id/view3"
                 app:layout_constraintTop_toBottomOf="@+id/view3" />
@@ -137,6 +139,8 @@
                 android:padding="@dimen/padding_12dp"
                 android:text="@string/choose_from_address_book"
                 android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="@+id/btnAddFromGroup"
                 app:layout_constraintStart_toStartOf="@+id/btnAddFromGroup"
                 app:layout_constraintTop_toBottomOf="@+id/btnAddFromGroup" />
@@ -150,6 +154,8 @@
                 android:padding="@dimen/padding_12dp"
                 android:text="@string/invite"
                 android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="@+id/btnChooseFromAddressBook"
                 app:layout_constraintStart_toStartOf="@+id/btnChooseFromAddressBook"
                 app:layout_constraintTop_toBottomOf="@+id/btnChooseFromAddressBook" />

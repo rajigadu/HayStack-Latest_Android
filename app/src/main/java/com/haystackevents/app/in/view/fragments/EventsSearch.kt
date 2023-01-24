@@ -19,6 +19,7 @@ import com.haystackevents.app.`in`.network.response.search_events.SearchEvents
 import com.haystackevents.app.`in`.network.response.search_events.SearchEventsData
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_OBJECTS
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
+import com.haystackevents.app.`in`.utils.AppConstants.EventTypes.SEARCH_EVENT
 import com.haystackevents.app.`in`.utils.Extensions.longSnackBar
 import com.haystackevents.app.`in`.utils.Extensions.showErrorResponse
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
@@ -29,9 +30,9 @@ import retrofit2.Response
 
 class EventsSearch: Fragment(), EventSearchListAdapter.EventSearchListItemClick {
 
-    private lateinit var binding: FragmentEventSearchBinding
+    private var binding: FragmentEventSearchBinding? = null
     private lateinit var eventSearchListAdapter: EventSearchListAdapter
-    private lateinit var searchEvent: SearchByEvent
+    private var searchEvent: SearchByEvent? = null
 
     private var listSearchedEvents = arrayListOf<SearchEventsData>()
 
@@ -40,31 +41,40 @@ class EventsSearch: Fragment(), EventSearchListAdapter.EventSearchListItemClick 
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentEventSearchBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.refreshSearchEvents.setColorSchemeColors(
+        binding?.refreshSearchEvents?.setColorSchemeColors(
             ContextCompat.getColor(requireContext(), R.color.colorPrimary))
 
-        searchEvent = arguments?.getSerializable(ARG_SERIALIZABLE) as SearchByEvent
+        searchEvent = arguments?.getSerializable(ARG_SERIALIZABLE) as? SearchByEvent
 
-        binding.toolbarEventsSearch.setNavigationOnClickListener {
+        binding?.toolbarEventsSearch?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
+        binding?.toolbarEventsSearch?.setOnMenuItemClickListener {
+            when(it?.itemId) {
+                R.id.actionHome -> {
+                    findNavController().navigate(R.id.action_eventsSearch_to_homeFragment)
+                }
+            }
+            return@setOnMenuItemClickListener false
+        }
+
         eventSearchListAdapter = EventSearchListAdapter(requireContext(), this)
-        binding.eventsSearchListView.apply {
+        binding?.eventsSearchListView?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = eventSearchListAdapter
         }
 
-        binding.refreshSearchEvents.setOnRefreshListener {
+        binding?.refreshSearchEvents?.setOnRefreshListener {
             listSearchedEvents.clear()
             getSearchEvents()
         }
@@ -72,9 +82,9 @@ class EventsSearch: Fragment(), EventSearchListAdapter.EventSearchListItemClick 
     }
 
     private fun getSearchEvents() {
-        searchEvent.id = SessionManager.instance.getUserId()
+        searchEvent?.id = SessionManager.instance.getUserId()
         Log.e("TAG", "searchEvent: $searchEvent")
-        binding.refreshSearchEvents.isRefreshing = true
+        binding?.refreshSearchEvents?.isRefreshing = true
         Repository.searchEvent(searchEvent).enqueue(object : Callback<SearchEvents>{
             override fun onResponse(call: Call<SearchEvents>, response: Response<SearchEvents>) {
 
@@ -90,17 +100,17 @@ class EventsSearch: Fragment(), EventSearchListAdapter.EventSearchListItemClick 
                             }
 
                         }else{
-                            longSnackBar(response.body()?.message!!, binding.constraintEventSearch)
+                            longSnackBar(response.body()?.message!!, binding?.constraintEventSearch)
                         }
                     }
 
                 }catch (e: Exception){e.printStackTrace()}
-                binding.refreshSearchEvents.isRefreshing = false
+                binding?.refreshSearchEvents?.isRefreshing = false
             }
 
             override fun onFailure(call: Call<SearchEvents>, t: Throwable) {
-                showErrorResponse(t, binding.constraintEventSearch)
-                binding.refreshSearchEvents.isRefreshing = false
+                showErrorResponse(t, binding?.constraintEventSearch)
+                binding?.refreshSearchEvents?.isRefreshing = false
             }
 
         })
@@ -108,7 +118,7 @@ class EventsSearch: Fragment(), EventSearchListAdapter.EventSearchListItemClick 
 
     override fun eventListItemClick(data: SearchEventsData) {
         val bundle = bundleOf(
-            ARG_OBJECTS to "Event Search",
+            ARG_OBJECTS to SEARCH_EVENT,
             ARG_SERIALIZABLE to data
         )
         findNavController().navigate(R.id.action_eventsSearch_to_eventsInfoFragment, bundle)

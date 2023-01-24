@@ -32,6 +32,17 @@
             android:layout_height="match_parent"
             android:padding="@dimen/padding_24dp">
 
+            <ProgressBar
+                android:id="@+id/imgProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="10dp"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@+id/eventImage"
+                app:layout_constraintEnd_toEndOf="@+id/eventImage"
+                app:layout_constraintStart_toStartOf="@+id/eventImage"
+                app:layout_constraintTop_toTopOf="@+id/eventImage" />
+
             <ImageView
                 android:id="@+id/eventImage"
                 android:layout_width="match_parent"
@@ -39,7 +50,7 @@
                 android:elevation="4dp"
                 android:scaleType="fitXY"
                 android:contentDescription="@string/inspect"
-                android:src="@drawable/menu_img"
+                android:src="@drawable/events_default_bg_"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

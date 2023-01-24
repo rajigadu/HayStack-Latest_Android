@@ -15,8 +15,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,8 +25,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -43,9 +39,10 @@ import com.haystackevents.app.`in`.network.response.states.States
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_OBJECTS
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
 import com.haystackevents.app.`in`.utils.Extensions
-import com.haystackevents.app.`in`.utils.Extensions.convertedDateFormat
+import com.haystackevents.app.`in`.utils.Extensions.constraintsBuilder
 import com.haystackevents.app.`in`.utils.Extensions.showErrorResponse
 import com.haystackevents.app.`in`.utils.Extensions.showSnackBar
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -59,12 +56,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateEvent: Fragment(),MultiplePermissionsListener {
 
     private var binding: FragmentCreateEventBinding? = null
-    private lateinit var bottomSheet: BottomSheetDialog
+    private var bottomSheet: BottomSheetDialog? = null
     private lateinit var events: Event
     private var lastClickTime: Long = 0
     private var listCountries = arrayListOf<String>()
@@ -72,6 +70,8 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
     private var selectedCountry: String? = "United States"
     private var selectedState: String? = ""
     private var selectedImageUri: Uri? = null
+    private var startDate: String? = null
+    private var endDate: String? = null
 
     private val permissionCamera = listOf(
         Manifest.permission.CAMERA,
@@ -262,7 +262,7 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
     }
 
     private fun getStatesList() {
-        binding?.progressCardView?.visibility = VISIBLE
+        context?.let { context -> ProgressCaller.showProgressDialog(context) }
         Repository.getAllStatesOfTheCountry(selectedCountry!!).enqueue(
             object : Callback<States>{
                 override fun onResponse(call: Call<States>, response: Response<States>) {
@@ -280,12 +280,12 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    binding?.progressCardView?.visibility = INVISIBLE
+                    ProgressCaller.hideProgressDialog()
                 }
 
                 override fun onFailure(call: Call<States>, t: Throwable) {
                     showErrorResponse(t, binding?.constraintCreateEvent)
-                    binding?.progressCardView?.visibility = INVISIBLE
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })
@@ -354,10 +354,11 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
             context?.resources?.getString(R.string.time_picker))
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun showDatePickerDialog(datePickerTitle: String) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.DatePickerTheme)
-            //.setCalendarConstraints(constraintsBuilder.build())
+            .setCalendarConstraints(constraintsBuilder.build())
             .setTitleText(datePickerTitle)
             .build()
 
@@ -367,16 +368,17 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
 
-            var month = calendar.get(Calendar.MONTH) + 1
+            val month = calendar.get(Calendar.MONTH)
             val year = calendar.get(Calendar.YEAR)
-            var day = calendar.get(Calendar.DAY_OF_MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            if (month < 10) month = "0$month".toInt()
-            if (day < 10) day = "0$day".toInt()
+            calendar.set(year,month, day)
+            val format = SimpleDateFormat("MM-dd-yyyy")
+            val strDate: String = format.format(calendar.time)
 
-            val selectedDate = "$month-$day-$year"
+            startDate = strDate
 
-            events.startdate = selectedDate
+            //events.startdate = selectedDate
             binding?.inputStartDate?.setText(datePicker.headerText)
 
         }
@@ -391,6 +393,7 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
 
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun selectEndDate(datePickerTitle: String) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.DatePickerTheme)
@@ -404,16 +407,17 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
 
-            var month = calendar.get(Calendar.MONTH) + 1
+            val month = calendar.get(Calendar.MONTH)
             val year = calendar.get(Calendar.YEAR)
-            var day = calendar.get(Calendar.DAY_OF_MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            if (month < 10) month = "0$month".toInt()
-            if (day < 10) day = "0$day".toInt()
+            calendar.set(year,month, day)
+            val format = SimpleDateFormat("MM-dd-yyyy")
+            val strDate: String = format.format(calendar.time)
 
-            val selectedDate = "$month-$day-$year"
+            endDate = strDate
 
-            events.enddate = selectedDate
+            //events.enddate = selectedDate
             binding?.inputEndDate?.setText(datePicker.headerText)
 
         }
@@ -427,10 +431,6 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
         )
 
     }
-
-    private val constraintsBuilder =
-        CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointForward.now())
 
     override fun onResume() {
         super.onResume()
@@ -451,8 +451,8 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
         events.contactinfo = binding?.inputContactInfoOne?.text.toString().trim()
         events.starttime = binding?.startTime?.text.toString().trim()
         events.endtime = binding?.endTime?.text.toString().trim()
-        events.startdate = convertedDateFormat(binding?.inputStartDate?.text.toString().trim())
-        events.enddate = convertedDateFormat(binding?.inputEndDate?.text.toString().trim())
+        events.startdate = startDate//convertedDateFormat(binding?.inputStartDate?.text.toString().trim())
+        events.enddate = endDate//convertedDateFormat(binding?.inputEndDate?.text.toString().trim())
         //events.image = selectedImageUri!!
 
         when {
@@ -533,9 +533,9 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
                 R.layout.image_picker_chooser_dialog_view,
                 requireActivity().findViewById<ConstraintLayout>(R.id.bottom_sheet)
             )
-        bottomSheet.setCancelable(false)
-        bottomSheet.setContentView(view)
-        bottomSheet.show()
+        bottomSheet?.setCancelable(false)
+        bottomSheet?.setContentView(view)
+        bottomSheet?.show()
 
         val btnGallery = view.findViewById<TextView>(R.id.actionGallery)
         val btnCamera = view.findViewById<TextView>(R.id.actionCamera)
@@ -543,16 +543,16 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
 
         btnGallery.setOnClickListener {
             openGallery()
-            bottomSheet.hide()
+            bottomSheet?.dismiss()
         }
 
         btnCamera.setOnClickListener {
             openCamera()
-            bottomSheet.hide()
+            bottomSheet?.dismiss()
         }
 
         btnCancel.setOnClickListener {
-            bottomSheet.hide()
+            bottomSheet?.dismiss()
         }
     }
 
@@ -572,10 +572,10 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
 
         if (result.resultCode == Activity.RESULT_OK) {
             try {
-                binding?.eventImage?.setImageBitmap(result.data?.extras!!.get("data") as Bitmap)
+                binding?.eventImage?.setImageBitmap(result.data?.extras?.get("data") as Bitmap)
                 selectedImageUri = getImageUri(requireContext(),
-                    result.data?.extras!!.get("data") as Bitmap)
-                Log.e("TAG", "data: $selectedImageUri")
+                    result.data?.extras?.get("data") as Bitmap)
+                //Log.e("TAG", "data: $selectedImageUri")
 
             } catch (e: Exception) {
                 //Log.e("TAG", "Exception: " + e.printStackTrace())
@@ -607,7 +607,7 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
         p0: MutableList<PermissionRequest>?,
         p1: PermissionToken?
     ) {
-        p1!!.continuePermissionRequest()
+        p1?.continuePermissionRequest()
     }
 
     private fun showPermissionAlertDialog() {
@@ -622,7 +622,7 @@ class CreateEvent: Fragment(),MultiplePermissionsListener {
                     Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                     Uri.fromParts(
                         getString(R.string.package_),
-                        requireActivity().packageName, null
+                        activity?.packageName, null
                     )
                 )
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

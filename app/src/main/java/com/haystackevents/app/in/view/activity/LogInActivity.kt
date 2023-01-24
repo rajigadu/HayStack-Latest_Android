@@ -22,7 +22,7 @@ import retrofit2.Response
 
 class LogInActivity: AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
+    private var binding: ActivityLoginBinding? = null
     private lateinit var bottomSheet: BottomSheetDialog
     var userName: String? = null
     var password: String? = null
@@ -32,22 +32,22 @@ class LogInActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
 
-        binding.signup.setOnClickListener {
+        binding?.signup?.setOnClickListener {
             startActivity(Intent(this@LogInActivity, SignUpActivity::class.java))
             finish()
         }
 
-        binding.forgotPass.setOnClickListener {
+        binding?.forgotPass?.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
             finish()
         }
 
-        binding.signIn.setOnClickListener {
-            userName = binding.inputEditTextEmail.text.toString().trim()
-            password = binding.inputEditTextPassword.text.toString().trim()
+        binding?.signIn?.setOnClickListener {
+            userName = binding?.inputEditTextEmail?.text.toString().trim()
+            password = binding?.inputEditTextPassword?.text.toString().trim()
 
             if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password)) {
                 showAlertDialog("Enter Valid Credential?",this, "Please enter a valid username and password")
@@ -86,7 +86,7 @@ class LogInActivity: AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<LogIn>, t: Throwable) {
-                    showErrorResponse(t, binding.constraintLogin)
+                    showErrorResponse(t, binding?.constraintLogin)
                     hideBottomSheet()
                 }
 

@@ -20,26 +20,6 @@
         app:navigationIconTint="@color/black"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/progressCardView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        android:visibility="invisible"
-        app:contentPadding="@dimen/padding12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ProgressBar
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:indeterminate="true" />
-
-    </com.google.android.material.card.MaterialCardView>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -185,6 +165,34 @@
                 app:layout_constraintStart_toStartOf="@+id/inputCity"
                 app:layout_constraintTop_toBottomOf="@+id/inputCity" />
 
+            <EditText
+                android:id="@+id/inputAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/marginMedium"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/lato"
+                android:hint="@string/enter_address"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:textSize="@dimen/font_16sp"
+                app:layout_constraintEnd_toEndOf="@+id/view15"
+                app:layout_constraintStart_toStartOf="@+id/view15"
+                app:layout_constraintTop_toBottomOf="@+id/view15"
+                tools:targetApi="m"
+                android:autofillHints=""
+                android:inputType="text" />
+
+            <View
+                android:id="@+id/view16"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:background="@color/colorBottomLine"
+                app:layout_constraintEnd_toEndOf="@+id/inputAddress"
+                app:layout_constraintStart_toStartOf="@+id/inputAddress"
+                app:layout_constraintTop_toBottomOf="@+id/inputAddress" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnContinue"
                 android:layout_width="match_parent"
@@ -196,7 +204,7 @@
                 android:textAllCaps="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view15" />
+                app:layout_constraintTop_toBottomOf="@+id/view16" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

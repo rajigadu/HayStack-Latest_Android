@@ -3,24 +3,20 @@ package com.haystackevents.app.`in`.network.response.search_events
 import java.io.Serializable
 
 data class SearchByEvent(
-    var id: String?,
-    var searchType: String?,
-    var country: String?,
-    var state: String?,
-    var city: String?,
-    var startDate: String?,
-    var endDate: String?,
-    var startTime: String?,
-    var endTime: String?,
-    var distanceMile: String?,
-    var nationWide: String?,
-    var latitude: String?,
-    var longitude: String?,
-    var category: String?,
-    var zipcode: String?
-): Serializable {
-    constructor(): this(
-        "", "", "", "", "", "", "","",
-        "", "", "", "", "", "", ""
-    )
-}
+    var id: String? = null,
+    var searchType: String? = null,
+    var country: String? = null,
+    var state: String? = null,
+    var city: String? = null,
+    var startDate: String? = null,
+    var endDate: String? = null,
+    var startTime: String? = null,
+    var endTime: String? = null,
+    var distanceMile: String? = null,
+    var nationWide: String? = null,
+    var latitude: String? = null,
+    var longitude: String? = null,
+    var category: String? = null,
+    var zipcode: String? = null,
+    var address: String? = null
+): Serializable

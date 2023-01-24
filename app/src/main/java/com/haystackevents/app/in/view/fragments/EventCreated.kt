@@ -12,30 +12,30 @@ import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 
 class EventCreated: Fragment() {
 
-    private lateinit var binding: FragmentEventCreatedBinding
+    private var binding: FragmentEventCreatedBinding? = null
 
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentEventCreatedBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*binding.toolbarEventCreated.setNavigationOnClickListener {
+        /*binding?.toolbarEventCreated.setNavigationOnClickListener {
             findNavController().popBackStack()
         }*/
 
-        binding.btnClose.setOnClickListener {
+        binding?.btnClose?.setOnClickListener {
             findNavController().navigate(R.id.action_eventCreated_to_homeFragment)
         }
 
-        binding.btnCrateAnotherEvent.setOnClickListener {
+        binding?.btnCrateAnotherEvent?.setOnClickListener {
             findNavController().navigate(R.id.action_eventCreated_to_createEvent)
         }
     }

@@ -3,12 +3,8 @@ package com.haystackevents.app.`in`.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent.ACTION_UP
 import android.view.LayoutInflater
-import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -22,22 +18,21 @@ import com.haystackevents.app.`in`.network.response.countries.Countries
 import com.haystackevents.app.`in`.network.response.soldier_signup.SignUpResponse
 import com.haystackevents.app.`in`.network.response.states.States
 import com.haystackevents.app.`in`.utils.Extensions
-import com.haystackevents.app.`in`.utils.Extensions.getDeviceUid
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
 import com.haystackevents.app.`in`.utils.Extensions.longSnackBar
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.Extensions.showErrorResponse
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.security.cert.Extension
 
 class SignUpActivity: AppCompatActivity() {
 
-    private lateinit var binding: ActivitySoldierRegistrationBinding
-    private lateinit var bottomSheet: BottomSheetDialog
+    private var binding: ActivitySoldierRegistrationBinding? = null
+    private var bottomSheet: BottomSheetDialog? = null
     private var fName: String? = null
     private var lName: String? = null
     private var email: String? = null
@@ -60,7 +55,7 @@ class SignUpActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySoldierRegistrationBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
         clickListeners()
 
@@ -71,7 +66,7 @@ class SignUpActivity: AppCompatActivity() {
     }
 
     private fun getCountryList() {
-        binding.progressLoader.visibility = VISIBLE
+        ProgressCaller.showProgressDialog(this)
         Repository.getAllCountries().enqueue(object : Callback<Countries>{
             override fun onResponse(call: Call<Countries>, response: Response<Countries>) {
                 try {
@@ -88,12 +83,12 @@ class SignUpActivity: AppCompatActivity() {
                     }
 
                 }catch (e: Exception){e.printStackTrace()}
-                binding.progressLoader.visibility = INVISIBLE
+                ProgressCaller.hideProgressDialog()
             }
 
             override fun onFailure(call: Call<Countries>, t: Throwable) {
-                showErrorResponse(t, binding.constraintSingUp)
-                binding.progressLoader.visibility = INVISIBLE
+                showErrorResponse(t, binding?.constraintSingUp)
+                ProgressCaller.hideProgressDialog()
             }
 
         })
@@ -102,25 +97,25 @@ class SignUpActivity: AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListeners() {
 
-        binding.signin.setOnClickListener {
+        binding?.signin?.setOnClickListener {
             startActivity(Intent(this, LogInActivity::class.java))
         }
 
-        binding.forgotPass.setOnClickListener {
+        binding?.forgotPass?.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
 
-        binding.constraintEditLayout.setOnTouchListener { view, motionEvent ->
+        binding?.constraintEditLayout?.setOnTouchListener { view, motionEvent ->
             when(motionEvent.action){
                 ACTION_UP ->{
-                    binding.constraintEditLayout.hideKeyboard()
+                    binding?.constraintEditLayout?.hideKeyboard()
                     return@setOnTouchListener true
                 }
             }
             return@setOnTouchListener  false
         }
 
-        binding.btnSignUp.setOnClickListener {
+        binding?.btnSignUp?.setOnClickListener {
             if (validated()){
                 if (email?.contains("@") == true){
                     completeSoldierRegistration()
@@ -133,25 +128,25 @@ class SignUpActivity: AppCompatActivity() {
             }
         }
 
-        binding.inputCountry.setOnClickListener {
+        binding?.inputCountry?.setOnClickListener {
             showCountriesListDialogView()
         }
 
-        binding.inputState.setOnClickListener {
+        binding?.inputState?.setOnClickListener {
             showStatesListDialog()
         }
 
-        binding.accTypeCompany.setOnCheckedChangeListener { compoundButton, isCheckd ->
+        binding?.accTypeCompany?.setOnCheckedChangeListener { compoundButton, isCheckd ->
             if (isCheckd) {
                 //accountType = "Company/Small Business"
-                binding.accTypeIndividual.isChecked = false
+                binding?.accTypeIndividual?.isChecked = false
             }
         }
 
-        binding.accTypeIndividual.setOnCheckedChangeListener { compoundButton, isCheckd ->
+        binding?.accTypeIndividual?.setOnCheckedChangeListener { compoundButton, isCheckd ->
             if (isCheckd) {
                 //accountType = "Individual"
-                binding.accTypeCompany.isChecked = false
+                binding?.accTypeCompany?.isChecked = false
             }
         }
 
@@ -183,7 +178,7 @@ class SignUpActivity: AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
-                    showErrorResponse(t, binding.constraintSingUp)
+                    showErrorResponse(t, binding?.constraintSingUp)
                     hideBottomSheet()
                 }
 
@@ -208,71 +203,71 @@ class SignUpActivity: AppCompatActivity() {
     }
 
     private fun validated(): Boolean {
-        fName = binding.inputFirstName.text.toString().trim()
-        lName = binding.inputLastName.text.toString().trim()
-        email = binding.inputEmail.text.toString().trim()
-        number = binding.inputNumber.text.toString().trim()
-        password = binding.inputPassword.text.toString().trim()
-        address = binding.inputAddress.text.toString().trim()
-        city = binding.inputCity.text.toString().trim()
-        zipcode = binding.inputZipcode.text.toString().trim()
-        country = binding.inputCountry.text.toString().trim()
-        state = binding.inputState.text.toString().trim()
+        fName = binding?.inputFirstName?.text.toString().trim()
+        lName = binding?.inputLastName?.text.toString().trim()
+        email = binding?.inputEmail?.text.toString().trim()
+        number = binding?.inputNumber?.text.toString().trim()
+        password = binding?.inputPassword?.text.toString().trim()
+        address = binding?.inputAddress?.text.toString().trim()
+        city = binding?.inputCity?.text.toString().trim()
+        zipcode = binding?.inputZipcode?.text.toString().trim()
+        country = binding?.inputCountry?.text.toString().trim()
+        state = binding?.inputState?.text.toString().trim()
 
-        accountType = if (binding.accTypeCompany.isChecked) "Company/Small Business"
-        else if (binding.accTypeIndividual.isChecked) "Individual" else ""
+        accountType = if (binding?.accTypeCompany?.isChecked == true) "Company/Small Business"
+        else if (binding?.accTypeIndividual?.isChecked == true) "Individual" else ""
 
         when {
             fName?.isEmpty() == true -> {
-                binding.inputFirstName.requestFocus()
-                binding.inputFirstName.error = "Enter First Name"
+                binding?.inputFirstName?.requestFocus()
+                binding?.inputFirstName?.error = "Enter First Name"
                 return false
             }
             lName?.isEmpty() == true -> {
-                binding.inputLastName.requestFocus()
-                binding.inputLastName.error = "Enter Last Name"
+                binding?.inputLastName?.requestFocus()
+                binding?.inputLastName?.error = "Enter Last Name"
                 return false
             }
             email?.isEmpty() == true -> {
-                binding.inputEmail.requestFocus()
-                binding.inputEmail.error = "Enter email address"
+                binding?.inputEmail?.requestFocus()
+                binding?.inputEmail?.error = "Enter email address"
                 return false
             }
             number!!.isEmpty() -> {
-                binding.inputNumber.requestFocus()
-                binding.inputNumber.error = "Enter Pphone number"
+                binding?.inputNumber?.requestFocus()
+                binding?.inputNumber?.error = "Enter Pphone number"
                 return false
             }
             password?.isEmpty() == true -> {
-                binding.inputPassword.requestFocus()
-                binding.inputPassword.error = "Enter Password"
+                binding?.inputPassword?.requestFocus()
+                binding?.inputPassword?.error = "Enter Password"
                 return false
             }
             address?.isEmpty() == true -> {
-                binding.inputAddress.requestFocus()
-                binding.inputAddress.error = "Enter address"
+                binding?.inputAddress?.requestFocus()
+                binding?.inputAddress?.error = "Enter address"
                 return false
             }
             country?.isEmpty() == true -> {
-                longSnackBar("Please select country", binding.constraintSingUp)
+                longSnackBar("Please select country", binding?.constraintSingUp)
                 return false
             }
             state?.isEmpty() == true -> {
-                longSnackBar("Please select state", binding.constraintSingUp)
+                longSnackBar("Please select state", binding?.constraintSingUp)
                 return false
             }
             city?.isEmpty() == true -> {
-                binding.inputCity.requestFocus()
-                binding.inputCity.error = "Enter City name"
+                binding?.inputCity?.requestFocus()
+                binding?.inputCity?.error = "Enter City name"
                 return false
             }
             zipcode?.isEmpty() == true -> {
-                binding.inputZipcode.requestFocus()
-                binding.inputZipcode.error = "Enter zipcode"
+                binding?.inputZipcode?.requestFocus()
+                binding?.inputZipcode?.error = "Enter zipcode"
                 return false
             }
             accountType.isNullOrEmpty() -> {
-                binding.constraintSingUp.let {
+                binding?.constraintSingUp.let {
                     Extensions.showSnackBar(it,"Please select account type")
                 }
                 return false
@@ -296,13 +291,13 @@ class SignUpActivity: AppCompatActivity() {
         title.text = "Soldier Registration"
         subTitle.text = "Verifying Registration Details, Please wait..."
 
-        bottomSheet.setCancelable(false)
-        bottomSheet.setContentView(view)
-        bottomSheet.show()
+        bottomSheet?.setCancelable(false)
+        bottomSheet?.setContentView(view)
+        bottomSheet?.show()
     }
 
     private  fun hideBottomSheet(){
-        bottomSheet.hide()
+        bottomSheet?.dismiss()
     }
 
     private fun showStatesListDialog() {
@@ -313,7 +308,7 @@ class SignUpActivity: AppCompatActivity() {
             .setTitle("Select Event State")
             .setCancelable(false)
             .setPositiveButton("Ok"){ dialog, which ->
-                binding.inputState.text = selectedState
+                binding?.inputState?.text = selectedState
             }
             .setSingleChoiceItems(array,-1){ dialog, which ->
                 selectedState = array[which]
@@ -330,9 +325,9 @@ class SignUpActivity: AppCompatActivity() {
             .setCancelable(false)
             .setPositiveButton("Ok"){ dialog, which ->
                 getStatesList()
-                binding.inputCountry.text = selectedCountry
+                binding?.inputCountry?.text = selectedCountry
                 selectedState = null
-                binding.inputState.text = ""
+                binding?.inputState?.text = ""
             }
             .setSingleChoiceItems(array,-1){ dialog, which ->
                 selectedCountry = array[which]
@@ -341,7 +336,7 @@ class SignUpActivity: AppCompatActivity() {
     }
 
     private fun getStatesList() {
-        binding.progressLoader.visibility = View.VISIBLE
+        ProgressCaller.showProgressDialog(this)
         Repository.getAllStatesOfTheCountry(selectedCountry!!).enqueue(
             object : Callback<States>{
                 override fun onResponse(call: Call<States>, response: Response<States>) {
@@ -359,12 +354,12 @@ class SignUpActivity: AppCompatActivity() {
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    binding.progressLoader.visibility = View.INVISIBLE
+                    ProgressCaller.hideProgressDialog()
                 }
 
                 override fun onFailure(call: Call<States>, t: Throwable) {
-                    showErrorResponse(t, binding.constraintSingUp)
-                    binding.progressLoader.visibility = View.INVISIBLE
+                    showErrorResponse(t, binding?.constraintSingUp)
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })

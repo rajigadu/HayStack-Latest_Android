@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/constraintCoordinatorLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -34,26 +35,27 @@
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/addressSearchView"
+            style="@style/searchViewText"
             android:layout_width="0dp"
-            android:layout_height="46dp"
-            android:paddingStart="@dimen/padding12dp"
-            android:paddingEnd="@dimen/padding_12dp"
-            android:elevation="2dp"
-            android:singleLine="true"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/margin_24dp"
+            android:background="@drawable/location_search_background"
             android:drawableStart="@drawable/search"
             android:drawablePadding="@dimen/padding12dp"
             android:drawableTint="@android:color/darker_gray"
-            style="@style/searchViewText"
+            android:elevation="2dp"
             android:hint="@string/search_event_location"
             android:inputType="none"
-            android:background="@drawable/location_search_background"
-            android:layout_margin="@dimen/margin_24dp"
+            android:paddingStart="@dimen/padding12dp"
+            android:paddingEnd="@dimen/padding_12dp"
+            android:singleLine="true"
+            android:textColorHint="#757575"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/toolbarSearch"
             app:layout_constraintTop_toBottomOf="@+id/toolbarSearch"
             tools:targetApi="m" />
 
-        <com.google.android.material.card.MaterialCardView
+        <!--<com.google.android.material.card.MaterialCardView
             android:id="@+id/progressCardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,17 +73,17 @@
                 android:layout_height="36dp"
                 android:indeterminate="true" />
 
-        </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>-->
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/sliderButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="gone"
+            android:animateLayoutChanges="true"
             app:cardCornerRadius="50dp"
-            android:layout_marginTop="@dimen/margin_8dp"
             app:layout_constraintStart_toEndOf="@+id/linearLayout"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout">
+            app:layout_constraintTop_toBottomOf="@+id/addressSearchView">
 
             <ImageView
                 android:id="@+id/sliderIcon"
@@ -97,16 +99,17 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
-            app:layout_constraintHeight_percent="0.85"
+            app:layout_constraintWidth_percent="0.8"
+            android:animateLayoutChanges="true"
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="@+id/google_map"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addressSearchView"
-            app:layout_constraintWidth_percent="0.8">
+            app:layout_constraintTop_toBottomOf="@+id/addressSearchView">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/eventsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="130dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/layout_near_events_list_item" />
 
@@ -118,12 +121,13 @@
         android:id="@+id/getMyLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/inspect"
         app:fabSize="mini"
+        app:layout_anchor="@id/bottomSheetLayout"
+        app:layout_anchorGravity="top|right"
         app:srcCompat="@drawable/ic_my_location_24"
         app:tint="@color/white"
-        app:layout_anchorGravity="top|right"
-        app:layout_anchor="@id/bottomSheetLayout"
-        android:contentDescription="@string/inspect" />
+        tools:ignore="ImageContrastCheck" />
 
     <include
         android:id="@+id/bottomSheetLayout"

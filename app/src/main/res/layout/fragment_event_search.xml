@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Event Search"
         app:titleCentered="true"
+        app:menu="@menu/event_search_toolbar_menu"
         app:navigationIcon="@drawable/arrow_left"
         app:navigationIconTint="@color/black"
         app:titleTextAppearance="@style/ToolbarTitle" />

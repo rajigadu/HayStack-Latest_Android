@@ -34,7 +34,7 @@ object AppConfig {
     const val ALL_CATEGORIES = "allcategory.php"
     const val LIST_INTEREST_EVENTS = "myinterestevents.php"
     const val LIST_ATTEND_EVENTS = "myattendevents.php"
-    const val LIST_INVITED_EVENTS = "newmembersevents.php?"
+    const val LIST_INVITED_EVENTS = "newmembersevents.php"
     const val LIST_COUNTRIES = "country.php"
     const val LIST_STATES = "state.php"
     const val NEAR_EVENTS = "near-events.php"

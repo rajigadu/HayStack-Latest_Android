@@ -53,7 +53,7 @@ import com.haystackevents.app.`in`.utils.AppConstants.ARG_OBJECTS as ARG_OBJECTS
 
 class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAdapter.NearestEventsOnClick {
 
-    private lateinit var binding: FragmentHomeBinding
+    private var binding: FragmentHomeBinding? = null
     private lateinit var nearestEventsListAdapter: NearestEventsListAdapter
 
     private val permissionsLocation = arrayOf(
@@ -79,9 +79,9 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentHomeBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -97,9 +97,7 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
 
     @SuppressLint("ClickableViewAccessibility")
     private fun onClickListener() {
-
-
-        binding.searchView.setOnTouchListener { view, motionEvent ->
+        binding?.searchView?.setOnTouchListener { view, motionEvent ->
             when(motionEvent.action){
                 ACTION_UP -> {
                     val bundle = bundleOf(ARG_OBJECTS1 to "0")
@@ -109,30 +107,30 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
             return@setOnTouchListener true
         }
 
-        binding.btnMyEvents.setOnClickListener {
+        binding?.btnMyEvents?.setOnClickListener {
             val bundle = bundleOf(ARG_OBJECTS1 to 0)
             findNavController().navigate(R.id.action_homeFragment_to_myEvents, bundle)
         }
 
-        binding.btnInterestEvents.setOnClickListener {
+        binding?.btnInterestEvents?.setOnClickListener {
             val bundle = bundleOf(ARG_OBJECTS1 to 1)
             findNavController().navigate(R.id.action_homeFragment_to_myEvents, bundle)
         }
 
-        binding.btnAttendEvents.setOnClickListener {
+        binding?.btnAttendEvents?.setOnClickListener {
             val bundle = bundleOf(ARG_OBJECTS1 to 2)
             findNavController().navigate(R.id.action_homeFragment_to_myEvents, bundle)
         }
 
-        binding.btnInviteEvents.setOnClickListener {
+        binding?.btnInviteEvents?.setOnClickListener {
             val bundle = bundleOf(ARG_OBJECTS1 to 3)
             findNavController().navigate(R.id.action_homeFragment_to_myEvents, bundle)
         }
 
-        binding.refreshNearestEvents.setColorSchemeColors(ContextCompat.getColor(
+        binding?.refreshNearestEvents?.setColorSchemeColors(ContextCompat.getColor(
             requireContext(), R.color.colorPrimary))
 
-        binding.refreshNearestEvents.setOnRefreshListener {
+        binding?.refreshNearestEvents?.setOnRefreshListener {
             nearestEvents()
         }
     }
@@ -152,7 +150,7 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
 
 
         nearestEventsListAdapter = NearestEventsListAdapter(requireContext())
-        binding.nearestEventsList.apply {
+        binding?.nearestEventsList?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = nearestEventsListAdapter
         }
@@ -214,7 +212,7 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
     }
 
     private fun nearestEvents() {
-        binding.refreshNearestEvents.isRefreshing = true
+        binding?.refreshNearestEvents?.isRefreshing = true
         val deviceId = getDeviceUid(requireContext())
         Repository.getNearestEvents(deviceId, latitude.toString(), longitude.toString(), category!!,
             searchType!!, currentDate!!, endTime!!).enqueue(object : Callback<NearestEvents>{
@@ -224,8 +222,8 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
                     if (response.isSuccessful){
                         if (response.body()?.status == "1"){
 
-                            binding.noEventsImgView.visibility = INVISIBLE
-                            binding.noEventsText.visibility = INVISIBLE
+                            binding?.noEventsImgView?.visibility = INVISIBLE
+                            binding?.noEventsText?.visibility = INVISIBLE
 
                             if (response.body()?.data != null){
                                 listNearestEvents.clear()
@@ -234,22 +232,22 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
                             }
 
                         }else{
-                            //binding.noEventsImgView.visibility = VISIBLE
-                            //binding.noEventsText.visibility = VISIBLE
-                            //longSnackBar(response.body()?.message!!, binding.constraintHome)
+                            //binding?.noEventsImgView.visibility = VISIBLE
+                            //binding?.noEventsText.visibility = VISIBLE
+                            //longSnackBar(response.body()?.message!!, binding?.constraintHome)
                         }
                     }
 
                 }catch (e: Exception){e.printStackTrace()}
-                binding.refreshNearestEvents.isRefreshing = false
+                binding?.refreshNearestEvents?.isRefreshing = false
             }
 
             override fun onFailure(call: Call<NearestEvents>, t: Throwable) {
                 try {
-                    //if (binding.constraintHome != null)showErrorResponse(t, binding.constraintHome)
+                    //if (binding?.constraintHome != null)showErrorResponse(t, binding?.constraintHome)
                 }catch (e: Exception){e.printStackTrace()}
 
-                binding.refreshNearestEvents.isRefreshing = false
+                binding?.refreshNearestEvents?.isRefreshing = false
 
             }
 
@@ -276,7 +274,7 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
                 val postalCode: String = addresses[0].postalCode
                 val knownName: String = addresses[0].featureName // Only if available else return NULL
 
-                binding.userLocation.text = "$city, $state, $country, $postalCode"
+                binding?.userLocation?.text = "$city, $state, $country, $postalCode"
             }
 
         }catch (e: IOException){e.printStackTrace()}
@@ -337,7 +335,7 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
         (activity as MainMenuActivity).updateBottomNavChange(0)
         (activity as MainMenuActivity).showBottomNav()
         val sdf = SimpleDateFormat("EEEE,dd MMM")
-        binding.currentDate.text = sdf.format(Date())
+        binding?.currentDate?.text = sdf.format(Date())
     }
 
     override fun nearestEventClick(nearEvents: NearestEventData) {

@@ -13,6 +13,7 @@ import com.haystackevents.app.`in`.network.repository.Repository
 import com.haystackevents.app.`in`.network.response.group_members.DefaultResponse
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.Extensions.showSnackBar
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,7 +21,7 @@ import retrofit2.Response
 
 class ChangePassword: Fragment() {
 
-    private lateinit var binding: FragmentChangePasswordBinding
+    private var binding: FragmentChangePasswordBinding? = null
     private var oldPassword: String? = null
     private var newPassword: String? = null
     private var confPassword: String? = null
@@ -31,29 +32,29 @@ class ChangePassword: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentChangePasswordBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarChangePassword.setNavigationOnClickListener {
+        binding?.toolbarChangePassword?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnUpdate.setOnClickListener {
-            oldPassword = binding.inputOldPassword.text.toString().trim()
-            newPassword = binding.inputNewPassword.text.toString().trim()
-            confPassword = binding.inputEditTextConfirmPassword.text.toString().trim()
+        binding?.btnUpdate?.setOnClickListener {
+            oldPassword = binding?.inputOldPassword?.text.toString().trim()
+            newPassword = binding?.inputNewPassword?.text.toString().trim()
+            confPassword = binding?.inputEditTextConfirmPassword?.text.toString().trim()
 
             if (TextUtils.isEmpty(oldPassword) || TextUtils.isEmpty(newPassword) || TextUtils.isEmpty(confPassword)){
-                showSnackBar(binding.constraintChangePassword, "Please enter all fields")
+                showSnackBar(binding?.constraintChangePassword, "Please enter all fields")
                 return@setOnClickListener
             }
             else if (newPassword != confPassword){
-                showSnackBar(binding.constraintChangePassword, "Password does not match")
+                showSnackBar(binding?.constraintChangePassword, "Password does not match")
                 return@setOnClickListener
             }
 
@@ -62,6 +63,7 @@ class ChangePassword: Fragment() {
     }
 
     private fun updateNewPassword() {
+        context?.let { ProgressCaller.showProgressDialog(it) }
         userId = SessionManager.instance.getUserId()
         Repository.changePassword(oldPassword!!, newPassword!!, userId!!)
             .enqueue(object : Callback<DefaultResponse>{
@@ -74,9 +76,9 @@ class ChangePassword: Fragment() {
                         if (response.isSuccessful){
                             if (response.body()?.status == "1"){
 
-                                binding.inputOldPassword.setText("")
-                                binding.inputNewPassword.setText("")
-                                binding.inputEditTextConfirmPassword.setText("")
+                                binding?.inputOldPassword?.setText("")
+                                binding?.inputNewPassword?.setText("")
+                                binding?.inputEditTextConfirmPassword?.setText("")
 
                                 showAlertDialog("Password Changed", requireContext(), response.body()?.message)
 
@@ -85,12 +87,14 @@ class ChangePassword: Fragment() {
                                 showAlertDialog("Failed!", requireContext(), response.body()?.message)
                             }
                         }
+                        ProgressCaller.hideProgressDialog()
 
                     }catch (e: Exception){e.printStackTrace()}
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    showSnackBar(binding.constraintChangePassword, t.localizedMessage!!)
+                    showSnackBar(binding?.constraintChangePassword, t.localizedMessage!!)
+                    ProgressCaller.hideProgressDialog()
                 }
 
             })

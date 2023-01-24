@@ -9,7 +9,7 @@ data class Event(
     var streetaddress: String,
     var image: String = "",
     var city: String,
-    var id: String,
+    var id: String?,
     var state: String,
     var zipcode: String,
     var startdate: String?,

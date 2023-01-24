@@ -29,7 +29,7 @@ import retrofit2.Response
 class CategoriesFragment: Fragment() {
 
 
-    private lateinit var binding: FragmentCategoriesBinding
+    private var binding: FragmentCategoriesBinding? = null
     private lateinit var categoriesListAdapter: CategoriesListAdapter
     private var events: Event?= null
     private var navigation: String?= null
@@ -41,9 +41,9 @@ class CategoriesFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentCategoriesBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -52,13 +52,13 @@ class CategoriesFragment: Fragment() {
 
         navigation = arguments?.getString(ARG_OBJECTS)
         if (navigation == "1") {
-            events = arguments?.getSerializable(ARG_SERIALIZABLE) as Event
-            Log.e("TAG", "events: $events")
+            events = arguments?.getSerializable(ARG_SERIALIZABLE) as? Event
+            Log.e("TAG", "categories events: $events")
         }
 
-        binding.refreshCategories.setColorSchemeColors(ContextCompat.getColor(requireContext(),
+        binding?.refreshCategories?.setColorSchemeColors(ContextCompat.getColor(requireContext(),
             R.color.colorPrimary))
-        binding.refreshCategories.setOnRefreshListener {
+        binding?.refreshCategories?.setOnRefreshListener {
             listCategories.clear()
             getCategories()
         }
@@ -66,25 +66,25 @@ class CategoriesFragment: Fragment() {
         getCategories()
 
         categoriesListAdapter = CategoriesListAdapter(requireContext())
-        binding.recyclerCategories.apply {
+        binding?.recyclerCategories?.apply {
             adapter = categoriesListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        binding.toolbarCategories.setNavigationOnClickListener {
+        binding?.toolbarCategories?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnContinue.setOnClickListener {
-            val selectedCategories = categoriesListAdapter.getSelectedCategories()
+        binding?.btnContinue?.setOnClickListener {
+            val selectedCategories: ArrayList<String> = categoriesListAdapter.getSelectedCategories()
             searchEvent = SearchByEvent()
-            if (selectedCategories.isNotEmpty() && selectedCategories.size !=0 ) {
+            if (selectedCategories.isNotEmpty()) {
                 for (elements in selectedCategories) Log.e("TAG", "elements: $elements")
                 val categories = selectedCategories.joinToString(",")
                 events?.category = categories
                 searchEvent?.category = categories
             }else {
-                showSnackBar(binding.constraintCategories, "Please select categories")
+                showSnackBar(binding?.constraintCategories, "Please select categories")
                 return@setOnClickListener
             }
 
@@ -102,7 +102,7 @@ class CategoriesFragment: Fragment() {
     }
 
     private fun getCategories() {
-        binding.refreshCategories.isRefreshing = true
+        binding?.refreshCategories?.isRefreshing = true
         Repository.getAllCategories().enqueue(object : Callback<AllCategories>{
             override fun onResponse(call: Call<AllCategories>, response: Response<AllCategories>) {
                 try{
@@ -117,19 +117,19 @@ class CategoriesFragment: Fragment() {
                             }
 
                         }else{
-                            showSnackBar(binding.constraintCategories, response.body()?.message!!)
+                            showSnackBar(binding?.constraintCategories, response.body()?.message!!)
                         }
                     }
 
                 }catch (e: Exception){e.printStackTrace()}
 
-                binding.refreshCategories.isRefreshing = false
+                binding?.refreshCategories?.isRefreshing = false
             }
 
             override fun onFailure(call: Call<AllCategories>, t: Throwable) {
                 try {
-                    showSnackBar(binding.constraintCategories, "Something went wrong")
-                    binding.refreshCategories.isRefreshing = false
+                    showSnackBar(binding?.constraintCategories, "Something went wrong")
+                    binding?.refreshCategories?.isRefreshing = false
                 }catch (e: Exception){e.printStackTrace()}
             }
 

@@ -22,7 +22,7 @@ data class SearchEventsData(
     val latitude: String,
     val longitude: String,
     val membercount: String,
-    val photo: String,
+    val photo: String? = null,
     val shortd: String,
     val startdate: String,
     val startdate1: String,

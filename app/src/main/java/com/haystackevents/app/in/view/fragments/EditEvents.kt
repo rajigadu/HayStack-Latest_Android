@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -37,10 +38,12 @@ import com.haystackevents.app.`in`.network.response.countries.Countries
 import com.haystackevents.app.`in`.network.response.group_members.DefaultResponse
 import com.haystackevents.app.`in`.network.response.my_events.MyEventsData
 import com.haystackevents.app.`in`.network.response.states.States
+import com.haystackevents.app.`in`.utils.AppConstants
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
 import com.haystackevents.app.`in`.utils.Extensions.longSnackBar
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
 import com.haystackevents.app.`in`.utils.Extensions.showErrorResponse
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -50,11 +53,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class EditEvents: Fragment(), MultiplePermissionsListener {
 
-    private lateinit var binding: FragmentEditEventBinding
+    private var binding: FragmentEditEventBinding? = null
     private lateinit var myEvents: MyEventsData
     private lateinit var bottomSheet: BottomSheetDialog
     private var selectedState = ""
@@ -72,9 +76,9 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentEditEventBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -93,13 +97,13 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListeners() {
 
-        binding.btnUpdateEvent.setOnClickListener {
+        binding?.btnUpdateEvent?.setOnClickListener {
             if (validated()){
                 updateEvent()
             }
         }
 
-        binding.editStartDate.setOnTouchListener { view, motionEvent ->
+        binding?.editStartDate?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -113,7 +117,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
         }
 
-        binding.editEndDate.setOnTouchListener { view, motionEvent ->
+        binding?.editEndDate?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -127,7 +131,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
         }
 
-        binding.editStartTime.setOnTouchListener { view, motionEvent ->
+        binding?.editStartTime?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -141,7 +145,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
         }
 
-        binding.editEndTime.setOnTouchListener { view, motionEvent ->
+        binding?.editEndTime?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -155,7 +159,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
         }
 
-        binding.editCountry.setOnTouchListener { view, motionEvent ->
+        binding?.editCountry?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -169,7 +173,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
         }
 
-        binding.editState.setOnTouchListener { view, motionEvent ->
+        binding?.editState?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -183,7 +187,12 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
         }
 
-        binding.toolbarEditEvent.setNavigationOnClickListener {
+        binding?.toolbarEditEvent?.setNavigationOnClickListener {
+            activity?.supportFragmentManager?.setFragmentResult(
+                "fragment-edit-events-callback", bundleOf(
+                    AppConstants.ARG_OBJECTS to 0
+                )
+            )
             findNavController().popBackStack()
         }
 
@@ -197,7 +206,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             .setTitle("Select Event State")
             .setCancelable(false)
             .setPositiveButton("Ok"){ dialog, which ->
-                binding.editState.setText(selectedState)
+                binding?.editState?.setText(selectedState)
             }
             .setSingleChoiceItems(array,-1){ dialog, which ->
                 selectedState = array[which]
@@ -214,7 +223,9 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             .setCancelable(false)
             .setPositiveButton("Ok"){ dialog, which ->
                 getStatesList()
-                binding.editCountry.setText(selectedCountry)
+                binding?.editCountry?.setText(selectedCountry)
+                binding?.editState?.setText("")
+                selectedState = ""
             }
             .setSingleChoiceItems(array,-1){ dialog, which ->
                 selectedCountry = array[which]
@@ -243,7 +254,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
                 }
 
                 override fun onFailure(call: Call<States>, t: Throwable) {
-                    showErrorResponse(t, binding.constraintEditEvent)
+                    showErrorResponse(t, binding?.constraintEditEvent)
                 }
 
             })
@@ -269,14 +280,14 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             }
 
             override fun onFailure(call: Call<Countries>, t: Throwable) {
-                showErrorResponse(t, binding.constraintEditEvent)
+                showErrorResponse(t, binding?.constraintEditEvent)
             }
 
         })
     }
 
     private fun updateEvent() {
-        showBottomSheet()
+        context?.let { ProgressCaller.showProgressDialog(it) }
         Repository.updateEvent(requireContext(), updateEvent).enqueue(object : Callback<DefaultResponse>{
             override fun onResponse(
                 call: Call<DefaultResponse>,
@@ -295,12 +306,12 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
                     }
 
                 }catch (e: Exception){e.printStackTrace()}
-                hideBottomSheet()
+                ProgressCaller.hideProgressDialog()
             }
 
             override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                showErrorResponse(t, binding.constraintEditEvent)
-                hideBottomSheet()
+                showErrorResponse(t, binding?.constraintEditEvent)
+                ProgressCaller.hideProgressDialog()
             }
 
         })
@@ -308,20 +319,20 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
 
     private fun validated(): Boolean {
         updateEvent.id = SessionManager.instance.getUserId()
-        updateEvent.event_name = binding.editEventName.text.toString().trim()
-        //updateEvent.des = binding.editEventDescription.text.toString().trim()
-        updateEvent.streetaddress = binding.editStreetAddress.text.toString().trim()
-        updateEvent.city = binding.editCity.text.toString().trim()
-        updateEvent.state = binding.editState.text.toString().trim()
-        updateEvent.country = binding.editCountry.text.toString().trim()
-        updateEvent.zipcode = binding.editZipCode.text.toString().trim()
-        updateEvent.hostname = binding.editHostName.text.toString().trim()
-        updateEvent.contactInfo = binding.editContactInfoOne.text.toString().trim()
+        updateEvent.event_name = binding?.editEventName?.text.toString().trim()
+        //updateEvent.des = binding?.editEventDescription.text.toString().trim()
+        updateEvent.streetaddress = binding?.editStreetAddress?.text.toString().trim()
+        updateEvent.city = binding?.editCity?.text.toString().trim()
+        updateEvent.state = binding?.editState?.text.toString().trim()
+        updateEvent.country = binding?.editCountry?.text.toString().trim()
+        updateEvent.zipcode = binding?.editZipCode?.text.toString().trim()
+        updateEvent.hostname = binding?.editHostName?.text.toString().trim()
+        updateEvent.contactInfo = binding?.editContactInfoOne?.text.toString().trim()
         updateEvent.hosttype = myEvents.hosttype
-        updateEvent.startDate = binding.editStartDate.text.toString().trim()
-        updateEvent.endDate = binding.editEndDate.text.toString().trim()
-        updateEvent.startTime = binding.editStartTime.text.toString().trim()
-        updateEvent.endTime = binding.editEndTime.text.toString().trim()
+        updateEvent.startDate = binding?.editStartDate?.text.toString().trim()
+        updateEvent.endDate = binding?.editEndDate?.text.toString().trim()
+        updateEvent.startTime = binding?.editStartTime?.text.toString().trim()
+        updateEvent.endTime = binding?.editEndTime?.text.toString().trim()
         //updateEvent.eventType = myEvents.eve
         updateEvent.latitude = myEvents.latitude
         updateEvent.longitude = myEvents.longitude
@@ -332,58 +343,58 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
         when {
 
             updateEvent.event_name.isEmpty() -> {
-                binding.editEventName.requestFocus()
-                binding.editEventName.error = "Enter Event Name"
+                binding?.editEventName?.requestFocus()
+                binding?.editEventName?.error = "Enter Event Name"
                 return false
             }
             /*updateEvent.event_description.isEmpty() -> {
-                binding.editEventDescription.requestFocus()
-                binding.editEventDescription.error = "Enter Event Description"
+                binding?.editEventDescription.requestFocus()
+                binding?.editEventDescription.error = "Enter Event Description"
                 return false
             }*/
             updateEvent.streetaddress.isEmpty() -> {
-                binding.editStreetAddress.requestFocus()
-                binding.editStreetAddress.error = "Enter Street Address"
+                binding?.editStreetAddress?.requestFocus()
+                binding?.editStreetAddress?.error = "Enter Street Address"
                 return false
             }
             updateEvent.city.isEmpty() -> {
-                binding.editCity.requestFocus()
-                binding.editCity.error = "Enter City Name"
+                binding?.editCity?.requestFocus()
+                binding?.editCity?.error = "Enter City Name"
                 return false
             }
             updateEvent.state.isEmpty() -> {
-                longSnackBar("Please select event city", binding.constraintEditEvent)
+                longSnackBar("Please select event city", binding?.constraintEditEvent)
                 return false
             }
             updateEvent.zipcode.isEmpty() -> {
-                binding.editZipCode.requestFocus()
-                binding.editZipCode.error = "Enter Zip code"
+                binding?.editZipCode?.requestFocus()
+                binding?.editZipCode?.error = "Enter Zip code"
                 return false
             }
             updateEvent.hostname.isEmpty() -> {
-                binding.editHostName.requestFocus()
-                binding.editHostName.error = "Enter Host Name"
+                binding?.editHostName?.requestFocus()
+                binding?.editHostName?.error = "Enter Host Name"
                 return false
             }
             updateEvent.contactInfo.isEmpty() -> {
-                binding.editContactInfoOne.requestFocus()
-                binding.editContactInfoOne.error = "Enter Contact Info"
+                binding?.editContactInfoOne?.requestFocus()
+                binding?.editContactInfoOne?.error = "Enter Contact Info"
                 return false
             }
             updateEvent.startTime.isEmpty() -> {
-                longSnackBar("Please select event start time", binding.constraintEditEvent)
+                longSnackBar("Please select event start time", binding?.constraintEditEvent)
                 return false
             }
             updateEvent.endTime.isEmpty() -> {
-                longSnackBar("Please select event end time", binding.constraintEditEvent)
+                longSnackBar("Please select event end time", binding?.constraintEditEvent)
                 return false
             }
             updateEvent.startDate.isEmpty() -> {
-                longSnackBar("Please select event start date", binding.constraintEditEvent)
+                longSnackBar("Please select event start date", binding?.constraintEditEvent)
                 return false
             }
             updateEvent.endDate.isEmpty() -> {
-                longSnackBar("Please select event end date", binding.constraintEditEvent)
+                longSnackBar("Please select event end date", binding?.constraintEditEvent)
                 return false
             }
 
@@ -394,28 +405,25 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
 
     private fun setEditEventData() {
 
-        if (myEvents != null){
+        binding?.editEventName?.setText(myEvents.event_name)
+        binding?.editHostName?.setText(myEvents.hostname)
+        binding?.editContactInfoOne?.setText(myEvents.contactinfo)
+        binding?.editCountry?.setText(myEvents.country)
+        binding?.editState?.setText(myEvents.state)
+        binding?.editCity?.setText(myEvents.city)
+        binding?.editZipCode?.setText(myEvents.zipcode)
+        binding?.editStreetAddress?.setText(myEvents.streetaddress)
+        binding?.editStartDate?.setText(myEvents.startdate)
+        binding?.editEndDate?.setText(myEvents.enddate)
+        binding?.editStartTime?.setText(myEvents.starttime)
+        binding?.editEndTime?.setText(myEvents.endtime)
+        binding?.editEventDescription?.setText(myEvents.event_description)
 
-            binding.editEventName.setText(myEvents.event_name)
-            binding.editHostName.setText(myEvents.hostname)
-            binding.editContactInfoOne.setText(myEvents.contactinfo)
-            binding.editCountry.setText(myEvents.country)
-            binding.editState.setText(myEvents.state)
-            binding.editCity.setText(myEvents.city)
-            binding.editZipCode.setText(myEvents.zipcode)
-            binding.editStreetAddress.setText(myEvents.streetaddress)
-            binding.editStartDate.setText(myEvents.startdate)
-            binding.editEndDate.setText(myEvents.enddate)
-            binding.editStartTime.setText(myEvents.starttime)
-            binding.editEndTime.setText(myEvents.endtime)
-            binding.editEventDescription.setText(myEvents.event_description)
-
-            /*if (myEvents.photo.isNotEmpty()) {
-                Glide.with(requireContext())
-                    .load(myEvents.photo)
-                    .into(binding.editEventImage)
-            }*/
-        }
+        /*if (myEvents.photo.isNotEmpty()) {
+        Glide.with(requireContext())
+            .load(myEvents.photo)
+            .into(binding?.editEventImage)
+    }*/
     }
 
     override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
@@ -473,7 +481,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
 
         if (result.resultCode == Activity.RESULT_OK) {
             try {
-                //binding.editEventImage.setImageBitmap(result.data?.extras!!.get("data") as Bitmap)
+                //binding?.editEventImage.setImageBitmap(result.data?.extras!!.get("data") as Bitmap)
                 selectedImageUri = getImageUri(requireContext(),
                     result.data?.extras!!.get("data") as Bitmap
                 )
@@ -492,7 +500,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
         if (result.resultCode == Activity.RESULT_OK &&
             result.data != null && result?.data?.data != null) {
             selectedImageUri = result.data?.data as Uri
-            //binding.editEventImage.setImageURI(selectedImageUri)
+            //binding?.editEventImage.setImageURI(selectedImageUri)
         }
     }
 
@@ -549,10 +557,11 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
         return Uri.parse(path)
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun showDatePickerDialog(datePickerTitle: String) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.DatePickerTheme)
-            //.setCalendarConstraints(constraintsBuilder.build())
+            .setCalendarConstraints(constraintsBuilder.build())
             .setTitleText(datePickerTitle)
             .build()
 
@@ -562,17 +571,16 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
 
-            var month = calendar.get(Calendar.MONTH) + 1
+            val month = calendar.get(Calendar.MONTH) + 1
             val year = calendar.get(Calendar.YEAR)
-            var day = calendar.get(Calendar.DAY_OF_MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            if (month < 10) month = "0$month".toInt()
-            if (day < 10) day = "0$day".toInt()
+            calendar.set(year,month, day)
+            val format = SimpleDateFormat("MM-dd-yyyy")
+            val strDate: String = format.format(calendar.time)
 
-            val selectedDate = "$month-$day-$year"
-
-            updateEvent.startDate = selectedDate
-            binding.editStartDate.setText(datePicker.headerText)
+            updateEvent.startDate = strDate
+            binding?.editStartDate?.setText(datePicker.headerText)
 
         }
 
@@ -590,6 +598,7 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
         CalendarConstraints.Builder()
             .setValidator(DateValidatorPointForward.now())
 
+    @SuppressLint("SimpleDateFormat")
     private fun selectEndDate(datePickerTitle: String) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.DatePickerTheme)
@@ -603,17 +612,16 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
             calendar.time = Date(it)
 
-            var month = calendar.get(Calendar.MONTH) + 1
+            val month = calendar.get(Calendar.MONTH)
             val year = calendar.get(Calendar.YEAR)
-            var day = calendar.get(Calendar.DAY_OF_MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            if (month < 10) month = "0$month".toInt()
-            if (day < 10) day = "0$day".toInt()
+            calendar.set(year,month, day)
+            val format = SimpleDateFormat("MM-dd-yyyy")
+            val strDate: String = format.format(calendar.time)
 
-            val selectedDate = "$month-$day-$year"
-
-            updateEvent.endDate = selectedDate
-            binding.editEndDate.setText(datePicker.headerText)
+            updateEvent.endDate = strDate
+            binding?.editEndDate?.setText(datePicker.headerText)
 
         }
 
@@ -651,10 +659,10 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
 
             if (timePickerTitle == "Select Event Start Time"){
                 updateEvent.startTime = selectedTime
-                binding.editStartTime.setText(selectedTime)
+                binding?.editStartTime?.setText(selectedTime)
             }else{
                 updateEvent.endTime = selectedTime
-                binding.editEndTime.setText(selectedTime)
+                binding?.editEndTime?.setText(selectedTime)
             }
         }
         timePicker.addOnNegativeButtonClickListener {
@@ -664,29 +672,6 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             context?.resources?.getString(R.string.time_picker))
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun showBottomSheet(){
-        bottomSheet = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-        val view = LayoutInflater.from(requireContext().applicationContext)
-            .inflate(
-                R.layout.authentication_progress_bottom_sheet,
-                requireActivity().findViewById<ConstraintLayout>(R.id.bottom_sheet)
-            )
-        val title = view.findViewById<TextView>(R.id.progress_title)
-        val subTitle = view.findViewById<TextView>(R.id.progress_sub_title)
-
-        title.text = "Updating Event"
-        subTitle.text = "Updating edited event, please wait..."
-
-        bottomSheet.setCancelable(false)
-        bottomSheet.setContentView(view)
-        bottomSheet.show()
-    }
-
-    private  fun hideBottomSheet(){
-        bottomSheet.hide()
-    }
-
     private fun showSuccessAlert(title: String, message: String) {
         val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
             .setTitle(title)
@@ -694,7 +679,8 @@ class EditEvents: Fragment(), MultiplePermissionsListener {
             .setCancelable(false)
             .setPositiveButton("Ok") { dialogInterface, i ->
                 dialogInterface.dismiss()
-                findNavController().popBackStack()
+                val bundle = bundleOf(AppConstants.ARG_OBJECTS to 0)
+                findNavController().navigate(R.id.action_editEvents_to_myEvents, bundle)
             }
             .create()
         if (dialog.window != null)

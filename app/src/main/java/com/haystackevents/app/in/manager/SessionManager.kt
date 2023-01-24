@@ -6,11 +6,13 @@ import android.content.SharedPreferences
 import com.google.android.gms.maps.model.LatLng
 import com.haystackevents.app.`in`.network.response.login.LogInData
 import com.haystackevents.app.`in`.utils.AppConstants.DOD_ID
+import com.haystackevents.app.`in`.utils.AppConstants.EMAIL
 import com.haystackevents.app.`in`.utils.AppConstants.FB_TOKEN
 import com.haystackevents.app.`in`.utils.AppConstants.F_NAME
 import com.haystackevents.app.`in`.utils.AppConstants.GOVT_EMAIL
 import com.haystackevents.app.`in`.utils.AppConstants.LOGNIED_USER
 import com.haystackevents.app.`in`.utils.AppConstants.L_NAME
+import com.haystackevents.app.`in`.utils.AppConstants.MOBILE
 import com.haystackevents.app.`in`.utils.AppConstants.UID
 import com.haystackevents.app.`in`.utils.AppConstants.USER_ID
 import com.haystackevents.app.`in`.utils.AppConstants.USER_LATITUDE
@@ -36,9 +38,27 @@ class SessionManager constructor(val context: Context) {
 
     fun getLoginUser(): String = sPreference.getString(LOGNIED_USER, "")!!
 
-    fun getUserId(): String = sPreference.getString(USER_ID, "")!!
+    fun getUserId(): String? = sPreference.getString(USER_ID, "")
 
     fun getUserToken(): String = sPreference.getString(FB_TOKEN, "")!!
+
+    fun getUserFirstName(): String = sPreference.getString(F_NAME, "")!!
+
+    fun getUserLastName(): String = sPreference.getString(L_NAME, "")!!
+
+    fun getUserMail(): String = sPreference.getString(GOVT_EMAIL, "")!!
+
+    fun getUserMobile(): String = sPreference.getString(MOBILE, "")!!
+
+    fun saveProfileData(fName: String?, lName: String?, mobile: String?) {
+        val editor = sPreference.edit()
+
+        editor.putString(MOBILE, mobile)
+        editor.putString(F_NAME, fName)
+        editor.putString(L_NAME, lName)
+
+        editor.apply()
+    }
 
     fun saveUserCredentials(login: List<LogInData>) {
         val editor = sPreference.edit()
@@ -47,7 +67,9 @@ class SessionManager constructor(val context: Context) {
         editor.putString(F_NAME, login[0].fname)
         editor.putString(L_NAME, login[0].lname)
         editor.putString(USER_ID, login[0].id)
-        editor.putString(GOVT_EMAIL, login[0].email)
+        editor.putString(EMAIL, login[0].email)
+        editor.putString(MOBILE, login[0].mobile)
+        editor.putString(MOBILE, login[0].mobile)
 
         editor.apply()
     }

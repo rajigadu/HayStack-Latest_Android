@@ -17,39 +17,39 @@ import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 class Profile: Fragment() {
 
 
-    private lateinit var binding: FragmentProfileBinding
+    private var binding: FragmentProfileBinding? = null
 
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentProfileBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.layoutLogout.setOnClickListener {
+        binding?.layoutLogout?.setOnClickListener {
             showConfirmationDialog()
         }
 
-        binding.layoutChangePassword.setOnClickListener {
+        binding?.layoutChangePassword?.setOnClickListener {
             findNavController().navigate(R.id.action_profile_to_changePassword)
         }
 
-        binding.layoutContactUs.setOnClickListener {
+        binding?.layoutContactUs?.setOnClickListener {
             findNavController().navigate(R.id.action_profile_to_contactUs)
         }
 
-        binding.layoutEditProfile.setOnClickListener {
+        binding?.layoutEditProfile?.setOnClickListener {
             findNavController().navigate(R.id.action_profile_to_editProfile)
         }
 
-        binding.layoutTermsAndConditions.setOnClickListener {
+        binding?.layoutTermsAndConditions?.setOnClickListener {
             findNavController().navigate(R.id.action_profile_to_termsAndConditions)
         }
 

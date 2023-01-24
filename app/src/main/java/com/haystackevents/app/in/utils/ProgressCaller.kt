@@ -10,32 +10,34 @@ import java.lang.Exception
 
 object ProgressCaller : Application() {
 
-    private lateinit var dialog: Dialog
+    private var dialog: Dialog? = null
 
     fun showProgressDialog(context: Context){
 
         try {
 
             dialog = Dialog(context)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-            if (dialog != null && !dialog.isShowing) {
-                dialog.setContentView(R.layout.dialog_view)
-                dialog.setCancelable(false)
-                dialog.show()
+            if (dialog != null) {
+                dialog?.setContentView(R.layout.dialog_view)
+                dialog?.setCancelable(false)
+                if (dialog?.isShowing != true)
+                    dialog?.show()
+                else dialog?.dismiss()
             } else {
                 dialog = Dialog(context)
             }
         }
         catch (e: Exception) {
-            dialog.dismiss()
+            dialog?.dismiss()
         }
     }
 
     fun hideProgressDialog(){
         try {
-            dialog.dismiss()
-            dialog.hide()
+            dialog?.dismiss()
+            dialog?.hide()
         }catch (e: Exception){
             e.printStackTrace()
         }

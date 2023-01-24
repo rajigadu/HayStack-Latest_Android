@@ -1,7 +1,7 @@
 package com.haystackevents.app.`in`.view.fragments
 
 import android.Manifest
-import android.animation.AnimatorListenerAdapter
+import android.animation.LayoutTransition
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -14,24 +14,27 @@ import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.animation.Animation.AnimationListener
+import android.view.animation.RotateAnimation
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationServices
@@ -58,6 +61,7 @@ import com.haystackevents.app.`in`.utils.AppConstants.USER_LATITUDE
 import com.haystackevents.app.`in`.utils.AppConstants.USER_LONGITUDE
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
+import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 import com.haystackevents.app.`in`.view.adapters.NearEventsAdapter
 import kotlinx.coroutines.Dispatchers
@@ -75,10 +79,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     GoogleMap.OnCameraMoveStartedListener, NearEventsAdapter.NearEventsOnClick {
 
     private lateinit var supportMapFragment: SupportMapFragment
-    private lateinit var lastLocation: Location
+    private var lastLocation: Location? = null
     private lateinit var nearEventsAdapter: NearEventsAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var binding: FragmentMapSearchBinding
+    private var binding: FragmentMapSearchBinding? = null
     private lateinit var mMap: GoogleMap
     private lateinit var geocoder: Geocoder
     private var currentmarker: Marker? = null
@@ -89,9 +93,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     private var nationWide: String? = "0"
     private var distanceInMile: String? = "0"
     private lateinit var nearEvent: GetNearEvents
-    private var listLatLng = arrayListOf<LatLng>()
+    private var listLatLng = arrayListOf<MapMarkers>()
     private var lastClickTime: Long = 0
-    private var sliderIsOpen = false
     private var currentLatLng: LatLng? = null
 
     private var country: String? = null
@@ -100,15 +103,20 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     private var city: String? = null
     private var latitude: String? = null
     private var longitude: String? = null
+    private var isNearEventsCalled:Boolean = false
 
+
+    data class MapMarkers(
+        val latlng: LatLng,
+        val event: String)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentMapSearchBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -123,12 +131,14 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListeners() {
+        binding?.linearLayout?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
+        binding?.sliderButton?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
 
-        binding.toolbarSearch.setNavigationOnClickListener {
+        binding?.toolbarSearch?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.bottomSheetLayout.btnContinue.setOnClickListener {
+        binding?.bottomSheetLayout?.btnContinue?.setOnClickListener {
             searchEvent?.nationWide = nationWide!!
             searchEvent?.searchType = "automatically"
             if (country != null)searchEvent?.country = country!!
@@ -137,13 +147,13 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             if (city != null)searchEvent?.city = city!!
             if (latitude != null)searchEvent?.latitude = latitude!!
             if (longitude != null)searchEvent?.longitude = longitude!!
-            searchEvent?.distanceMile = distanceInMile
+            searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
             findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
         }
 
-        binding.bottomSheetLayout.btnManualSearch.setOnClickListener {
+        binding?.bottomSheetLayout?.btnManualSearch?.setOnClickListener {
             searchEvent?.nationWide = nationWide!!
             searchEvent?.searchType = "manual"
             searchEvent?.distanceMile = distanceInMile
@@ -151,7 +161,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             findNavController().navigate(R.id.action_searchFragment_to_manualSearch, bundle)
         }
 
-        binding.addressSearchView.setOnTouchListener { view, motionEvent ->
+        binding?.addressSearchView?.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action){
                 MotionEvent.ACTION_UP -> {
                     if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
@@ -168,31 +178,34 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             }
         }
 
-        binding.bottomSheetLayout.checkNationWide.setOnCheckedChangeListener { compoundButton, isChecked ->
+        binding?.bottomSheetLayout?.checkNationWide?.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 nationWide = "1"
                 distanceInMile = "0"
-                binding.bottomSheetLayout.layoutMapRadius.visibility = GONE
+                binding?.bottomSheetLayout?.mapRadius?.setText("0")
+                binding?.bottomSheetLayout?.layoutMapRadius?.visibility = GONE
             }
             else {
-                binding.bottomSheetLayout.layoutMapRadius.visibility = VISIBLE
+                binding?.bottomSheetLayout?.layoutMapRadius?.visibility = VISIBLE
                 nationWide = "0"
-                distanceInMile = binding.bottomSheetLayout.mapRadius.text.toString().trim()
+                distanceInMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
             }
-            if (lastLocation != null) {
-                nearestEvents(LatLng(lastLocation.latitude, lastLocation.longitude))
-            }
+            val latLng = if (latitude != null && longitude != null) LatLng(latitude?.toDouble()!!,longitude?.toDouble()!!)
+            else LatLng(lastLocation?.latitude!!, lastLocation?.longitude!!)
+            if (!isNearEventsCalled) nearestEvents(latLng)
+//            if (lastLocation != null) {
+//                lastLocation?.latitude?.let { latitude ->
+//                    lastLocation?.longitude?.let { longitude ->
+//                    LatLng(latitude, longitude)
+//                } }?.let { nearestEvents(it) }
+//            }
         }
 
-        binding.bottomSheetLayout.mapRadius.setOnEditorActionListener { textView, actionId, keyEvent ->
+        binding?.bottomSheetLayout?.mapRadius?.setOnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_DONE){
-                if (lastLocation != null) {
-                    distanceInMile = binding.bottomSheetLayout.mapRadius.text.toString().trim()
-                    nearestEvents(LatLng(lastLocation.latitude, lastLocation.longitude))
-                    binding.bottomSheetLayout.mapRadius.hideKeyboard()
-                }
-                if (!TextUtils.isEmpty(distanceInMile)) drawCircle()
-                else {
+                if (!TextUtils.isEmpty(distanceInMile)) {
+                    getEventsWithInDistance()
+                } else {
                     context?.let {
                         showAlertDialog("Please Note",it,"please enter distance")
                     }
@@ -203,100 +216,113 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             false
         }
 
-        binding.bottomSheetLayout.setMapRadius.setOnClickListener {
-            if (lastLocation != null) {
-                distanceInMile = binding.bottomSheetLayout.mapRadius.text.toString().trim()
-                nearestEvents(LatLng(lastLocation.latitude, lastLocation.longitude))
-                binding.bottomSheetLayout.setMapRadius.hideKeyboard()
-            }
-            if (!TextUtils.isEmpty(distanceInMile)) drawCircle()
-            else {
+        binding?.bottomSheetLayout?.setMapRadius?.setOnClickListener {
+            if (!TextUtils.isEmpty(distanceInMile)) {
+                getEventsWithInDistance()
+            } else {
                 context?.let {
                     showAlertDialog("Please Note",it,"please enter distance")
                 }
             }
         }
 
-        binding.getMyLocation.setOnClickListener {
+        binding?.getMyLocation?.setOnClickListener {
             getMyLocation()
         }
 
-        binding.sliderButton.setOnClickListener {
+        binding?.sliderButton?.setOnClickListener {
             animateEventsListVisibility()
         }
     }
 
+    private fun getEventsWithInDistance() {
+        drawCircle()
+        val latLng = if (latitude != null && longitude != null) LatLng(latitude?.toDouble()!!,longitude?.toDouble()!!)
+        else LatLng(lastLocation?.latitude!!, lastLocation?.longitude!!)
+        if (!isNearEventsCalled) nearestEvents(latLng)
+        binding?.bottomSheetLayout?.mapRadius?.hideKeyboard()
+        distanceInMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
+//        if (lastLocation != null) {
+//            distanceInMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
+//            lastLocation?.longitude?.let { latitude ->
+//                lastLocation?.latitude?.let { longitude -> LatLng(longitude, latitude) }
+//            }?.let { nearestEvents(it) }
+//        }
+    }
+
+    /**
+     * Expanding Recycler layout view transition animate
+     * Handling click button rotational animation
+     * */
     private fun animateEventsListVisibility(){
-        if (sliderIsOpen){
-            binding.linearLayout.startAnimation(
-                AnimationUtils.loadAnimation(
-                    requireContext(),
-                    R.anim.slide_left
-                ).apply {
-                    this.setAnimationListener(object : AnimatorListenerAdapter(),
-                        Animation.AnimationListener {
-                        override fun onAnimationStart(p0: Animation?) {}
+        val rotateAnimation: RotateAnimation?
+        val position: Float
 
-                        override fun onAnimationEnd(p0: Animation?) {
-                            binding.linearLayout.visibility = GONE
-                            binding.sliderIcon.setImageResource(R.drawable.slider_icon_open)
-                        }
-
-                        override fun onAnimationRepeat(p0: Animation?) {}
-
-                    })
+        binding?.linearLayout?.let { view ->
+            if (!view.isVisible) {
+                rotateAnimation = getRotationAnimation(0f, 180f)
+                position = 180f
+            } else {
+                rotateAnimation = getRotationAnimation(180f, 360f)
+                position = 360f
+            }
+            rotateAnimation.duration = 500
+            binding?.sliderIcon?.startAnimation(rotateAnimation)
+            rotateAnimation.setAnimationListener(object : AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                    TransitionManager.beginDelayedTransition(
+                        view,
+                        AutoTransition()
+                    )
+                    TransitionManager.beginDelayedTransition(
+                        binding?.sliderButton!!,
+                        AutoTransition()
+                    )
+                    view.isVisible = !view.isVisible
                 }
-            )
-
-            sliderIsOpen = false
-        }else{
-            binding.linearLayout.startAnimation(
-                AnimationUtils.loadAnimation(
-                    requireContext(),
-                    R.anim.slide_right
-                ).apply {
-                    this.setAnimationListener(object : AnimatorListenerAdapter(),
-                        Animation.AnimationListener {
-                        override fun onAnimationStart(p0: Animation?) {}
-
-                        override fun onAnimationEnd(p0: Animation?) {
-                            binding.linearLayout.visibility = VISIBLE
-                            binding.sliderIcon.setImageResource(R.drawable.slider_icon_close)
-                        }
-
-                        override fun onAnimationRepeat(p0: Animation?) {}
-
-                    })
+                override fun onAnimationEnd(animation: Animation?) {
+                   binding?.sliderIcon?.rotation = position
                 }
-            )
-            sliderIsOpen = true
+                override fun onAnimationRepeat(animation: Animation?) {} })
         }
+    }
+
+    private fun getRotationAnimation(frmDegrees: Float, toDegrees: Float): RotateAnimation {
+        return RotateAnimation(
+            frmDegrees, toDegrees,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        )
     }
 
     private fun drawCircle() {
         val midLatLng = mMap.cameraPosition.target
         mMap.clear()
-        mMap.addCircle(distanceInMile?.toDouble()?.let {
-            CircleOptions()
-                .center(currentLatLng)
-                .radius(it)
-                .strokeWidth(1.0f)
-                .strokeColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-                .fillColor(ContextCompat.getColor(requireContext(), R.color.colorMapRadiusCircle))
-        })
+        distanceInMile?.toDouble()?.let {
+            currentLatLng?.let { it1 ->
+                CircleOptions()
+                    .center(it1)
+                    .radius(it)
+                    .strokeWidth(1.0f)
+                    .strokeColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+                    .fillColor(ContextCompat.getColor(requireContext(), R.color.colorMapRadiusCircle))
+            }
+        }?.let { mMap.addCircle(it) }
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16f))
     }
 
     private fun getMyLocation() {
         if (lastLocation != null) {
-            val latLng = LatLng(lastLocation.latitude, lastLocation.longitude)
+            val latLng = lastLocation?.longitude?.let { longitude ->
+                lastLocation?.latitude?.let { latitude ->
+                LatLng(latitude, longitude) } }
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16f)
             mMap.animateCamera(cameraUpdate)
         }
     }
 
     private fun initiateView() {
-
+        nearEvent = GetNearEvents()
         if (!Places.isInitialized()){
             Places.initialize(
                 requireContext().applicationContext, resources.getString(R.string.google_maps_key))
@@ -308,33 +334,32 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             Place.Field.LAT_LNG
         )
 
-        //if (sliderIsOpen) binding.linearLayout.visibility = VISIBLE
-
         searchEvent = arguments?.getSerializable(ARG_SERIALIZABLE) as SearchByEvent
         //Log.e("TAG", "searchEvent: $searchEvent")
 
-        BottomSheetBehavior.from(binding.bottomSheetLayout.bottomSheet).apply {
+        BottomSheetBehavior.from(binding?.bottomSheetLayout?.bottomSheet!!).apply {
             peekHeight = 200
-            this.state = BottomSheetBehavior.STATE_COLLAPSED
+            this.state = BottomSheetBehavior.STATE_EXPANDED
         }
         supportMapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         supportMapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         nearEventsAdapter = NearEventsAdapter(requireContext())
-        binding.eventsRecyclerView.apply {
+        binding?.eventsRecyclerView?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = nearEventsAdapter
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
             //Get Near Events
-            nearestEvents(SessionManager.instance.getUserLatLng())
+            val currentLatLong = if (latitude != null && longitude != null) LatLng(latitude?.toDouble()!!, longitude?.toDouble()!!)
+            else SessionManager.instance.getUserLatLng()
+            if (!isNearEventsCalled) nearestEvents(currentLatLong)
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-
         mMap = googleMap
         mMap.setOnMarkerClickListener(this)
         mMap.uiSettings.isZoomControlsEnabled = true
@@ -353,11 +378,11 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
     private fun setUpMap() {
 
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED)
-            {
+            != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(),
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_REQ_LOCATION)
@@ -371,8 +396,11 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
             if (location != null){
                 lastLocation = location
-                val lat = SessionManager.instance.sPreference.getString(USER_LATITUDE, "")
-                val lon = SessionManager.instance.sPreference.getString(USER_LONGITUDE, "")
+
+                val lat = if (nearEvent.lat != null) nearEvent.lat
+                else SessionManager.instance.sPreference.getString(USER_LATITUDE, "")
+                val lon = if (nearEvent.lon != null) nearEvent.lon
+                else SessionManager.instance.sPreference.getString(USER_LONGITUDE, "")
                 //Log.e("TAG", "lat: $lat  lon: $lon")
                 //val currentLatLong = LatLng(location.latitude, location.longitude)
                 
@@ -392,12 +420,11 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val place = Autocomplete.getPlaceFromIntent(data!!)
-            binding.addressSearchView.setText(place.address)
-            var addresses: List<Address>? = null
+            binding?.addressSearchView?.setText(place.address)
 
             try {
 
-                addresses = geocoder.getFromLocation(
+                val addresses = geocoder.getFromLocation(
                     place.latLng?.latitude!!,
                     place.latLng?.longitude!!,
                     1
@@ -414,8 +441,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
             //setLocationAddress(place.latLng!!)
             mMap.clear()
-            nearestEvents(place.latLng!!)
-            binding.addressSearchView.setText(place.address)
+            if (!isNearEventsCalled) nearestEvents(place.latLng!!)
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng!!))
         }
         else if (result.resultCode == RESULT_ERROR){
             val status = Autocomplete.getStatusFromIntent(result.data!!)
@@ -425,7 +452,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     private fun setLocationAddress(currentLatLong: LatLng) {
         geocoder = Geocoder(requireContext(), Locale.getDefault())
 
-        var addresses: List<Address>? = null
+        val addresses: List<Address>?
         var addressLine: String? = null
 
         try {
@@ -450,7 +477,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         if (addressLine != null){
             placeMarkerOnMap(currentLatLong, addressLine)
             //Log.e("TAG", "called latLng: $currentLatLong")
-            binding.addressSearchView.setText(addressLine, true)
+            binding?.addressSearchView?.setText(addressLine, true)
         }
     }
 
@@ -469,8 +496,9 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     }
 
     private fun bitmapDescriptor(): BitmapDescriptor {
-        val vectorDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.haystack_logo)
-
+        val vectorDrawable = context?.let {
+            ContextCompat.getDrawable(it, R.drawable.haystack_logo)
+        }
         vectorDrawable?.setBounds(
             0, 0, 42, 42)
         val bitmap = Bitmap.createBitmap(
@@ -492,11 +520,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     }
 
     private fun nearestEvents(currentLatLong: LatLng) {
+        isNearEventsCalled = true
+        binding?.sliderButton?.isVisible = false
+        binding?.linearLayout?.isVisible = false
 
-        binding.progressCardView.visibility = VISIBLE
-        binding.sliderButton.visibility = INVISIBLE
-
-        nearEvent = GetNearEvents()
         //nearEvent.deviceType = DEVICE_TYPE
         nearEvent.lat = currentLatLong.latitude.toString()
         nearEvent.lon = currentLatLong.longitude.toString()
@@ -509,6 +536,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         //Log.e("TAG", "nearEvent: $nearEvent")
 
         lifecycleScope.launch(Dispatchers.Main) {
+            context?.let { ProgressCaller.showProgressDialog(it) }
             Repository.getNearEvents(nearEvent).enqueue(object : Callback<NearEvents>{
                 override fun onResponse(call: Call<NearEvents>, response: Response<NearEvents>) {
 
@@ -516,49 +544,65 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
                         if (response.isSuccessful){
                             if (response.body()?.status == "1"){
-
-                                listLatLng.clear()
-                                for (item in response.body()?.data!!){
-                                    listLatLng.add(LatLng(item.latitude.toDouble(), item.longitude.toDouble()))
-                                    Log.e("TAG", "response: lat->${item.latitude}, lon->${item.longitude}")
+                                response.body()?.data?.let { data ->
+                                    listLatLng.clear()
+                                    for (item in data){
+                                        listLatLng.add(
+                                            MapMarkers(
+                                                latlng = LatLng(item.latitude.toDouble(), item.longitude.toDouble()),
+                                                event = item.event_name
+                                            )
+                                        )
+                                        //Log.e("TAG", "response: lat->${item.latitude}, lon->${item.longitude}")
+                                    }
+                                    nearEventsList.clear()
+                                    nearEventsList.addAll(data)
+                                    nearEventsAdapter.update(nearEventsList, this@MapFragment)
+                                    setMarkers(listLatLng)
+                                    binding?.sliderButton?.isVisible = true
+                                    binding?.sliderIcon?.rotation = 360f
                                 }
-                                nearEventsList.clear()
-                                nearEventsList.addAll(response.body()?.data!!)
-                                nearEventsAdapter.update(nearEventsList, this@MapFragment)
-                                setMarkers(listLatLng)
-                                binding.sliderButton.visibility = VISIBLE
                             }else{
-                                showAlertDialog("No Events", requireContext(), response.body()?.message!!)
+                                //showAlertDialog("No Events", requireContext(), response.body()?.message!!)
+                                //showSnackBar(binding?.constraintCoordinatorLayout, response.body()?.message!!)
+                                context?.let { Toast.makeText(
+                                    it,response.body()?.message,Toast.LENGTH_SHORT).show() }
+                                binding?.sliderButton?.isVisible = false
+                                binding?.sliderIcon?.rotation = 360f
                             }
-                            binding.sliderButton.visibility = VISIBLE
+                            ProgressCaller.hideProgressDialog()
                         }
 
                     }catch (e: Exception){e.printStackTrace()}
-                    binding.progressCardView.visibility = INVISIBLE
-
+                    ProgressCaller.hideProgressDialog()
+                    isNearEventsCalled = false
                 }
 
                 override fun onFailure(call: Call<NearEvents>, t: Throwable) {
-                    binding.progressCardView.visibility = INVISIBLE
+                    ProgressCaller.hideProgressDialog()
                     context?.let { context ->
                         Toast.makeText(
                             context, t.message, Toast.LENGTH_SHORT).show()
                     }
+                    isNearEventsCalled = false
+                    binding?.sliderButton?.isVisible = false
+                    binding?.sliderIcon?.rotation = 360f
                 }
 
             })
         }
     }
 
-    private fun setMarkers(listLatLng: ArrayList<LatLng>) {
+    private fun setMarkers(listLatLng: ArrayList<MapMarkers>) {
         listLatLng.forEach {
             //Log.e("TAG", "latLng: $it")
             mMap.addMarker(MarkerOptions()
-                .position(it).title(getAddress(it))
+                .position(it.latlng)
+                .title("${it.event}, \n ${getAddress(it.latlng)}")
                 .icon(bitmapDescriptor())
             )
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(16f))
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(it))
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(it.latlng))
         }
     }
 

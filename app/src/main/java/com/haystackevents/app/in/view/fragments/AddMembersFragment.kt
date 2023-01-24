@@ -31,62 +31,79 @@ import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 
 class AddMembersFragment: Fragment() {
 
-    private lateinit var binding: FragmentAddMemberBinding
+    private var binding: FragmentAddMemberBinding? = null
     private var events: Event? = null
+    //private var viewModel: DataViewModel? = null
 
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentAddMemberBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        events = arguments?.getSerializable(ARG_SERIALIZABLE) as? Event
-        //Log.e("TAG", "events: $events")
-        activity?.supportFragmentManager?.setFragmentResultListener(
-            "fragment-callback", viewLifecycleOwner) { key, bundle ->
-            val data = bundle.getSerializable("data") as? Data
-            binding.inputMobile.setText(data?.member)
-            binding.inputName.setText(data?.number)
-            binding.inputEmail.setText(data?.email)
+        //viewModel = ViewModelProviders.of(this).get(DataViewModel::class.java)
+
+        //if (events != null) viewModel?.eventsData = events
+        if (arguments?.getString("flow") == "1") {
+            events = arguments?.getSerializable(ARG_SERIALIZABLE) as? Event
+        } else {
+            activity?.supportFragmentManager?.setFragmentResultListener(
+                "fragment-callback1", viewLifecycleOwner
+            ) { key, bundle ->
+                val data = bundle.getSerializable("data") as? Data
+                events = bundle.getSerializable(ARG_SERIALIZABLE) as? Event
+                //Log.e("TAG", "events: $events")
+                binding?.inputMobile?.setText(data?.number)
+                binding?.inputName?.setText(data?.member)
+                binding?.inputEmail?.setText(data?.email)
+            }
         }
 
-        binding.toolbarAddMember.setNavigationOnClickListener {
+        binding?.toolbarAddMember?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnInvite.setOnClickListener {
-            val fullName = binding.inputName.text.toString().trim()
-            val email = binding.inputEmail.text.toString().trim()
-            val mobile = binding.inputMobile.text.toString().trim()
+        binding?.btnInvite?.setOnClickListener {
+            val fullName = binding?.inputName?.text.toString().trim()
+            val email = binding?.inputEmail?.text.toString().trim()
+            val mobile = binding?.inputMobile?.text.toString().trim()
 
-            if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(mobile)) {
-                showSnackBar(binding.constraintAddMember, "Please fill all the fields")
+            if (TextUtils.isEmpty(fullName)) {
+                showSnackBar(binding?.constraintAddMember, "Please Enter Name")
                 return@setOnClickListener
             }
-            //events?.allmembers?.clear()
+            if (TextUtils.isEmpty(email) && TextUtils.isEmpty(mobile)) {
+                showSnackBar(binding?.constraintAddMember, "Email or Phone is mandatory")
+                return@setOnClickListener
+            }
             events?.allmembers?.add(AllMembers(fullName, email, mobile))
-
-            val bundle = bundleOf(ARG_SERIALIZABLE to events)
+            val bundle = bundleOf(
+                ARG_SERIALIZABLE to events,
+                "flow" to "1"
+            )
             findNavController().navigate(R.id.action_addMembersFragment_to_membersPublish, bundle)
         }
 
-        binding.btnSkip.setOnClickListener {
-            val bundle = bundleOf(ARG_SERIALIZABLE to events)
+        binding?.btnSkip?.setOnClickListener {
+            val bundle = bundleOf(
+                ARG_SERIALIZABLE to events,
+                "flow" to "1"
+            )
             findNavController().navigate(
                 R.id.action_addMembersFragment_to_membersPublish,
                 bundle
             )
         }
 
-        binding.btnChooseFromAddressBook.setOnClickListener {
+        binding?.btnChooseFromAddressBook?.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.READ_CONTACTS
@@ -99,12 +116,25 @@ class AddMembersFragment: Fragment() {
             readContactActivityResult.launch(intent)
         }
 
-        binding.btnAddFromGroup.setOnClickListener {
-            val bundle = bundleOf(FROM_ADD_MEMBERS_FRAGMENT to true)
+        binding?.btnAddFromGroup?.setOnClickListener {
+            val bundle = bundleOf(
+                FROM_ADD_MEMBERS_FRAGMENT to true,
+                ARG_SERIALIZABLE to events
+            )
             findNavController().navigate(
                 R.id.action_addMembersFragment_to_groupsFragment,
                 bundle
             )
+
+//            (activity as? AppCompatActivity)?.navigate(
+//                fragment = GroupsFragment().newInstance(
+//                    callback = object : FragmentCallback {
+//                        override fun onResult(param1: Any?, param2: Any?, param3: Any?) {
+//
+//                        }
+//                    }
+//                )
+//            )
         }
     }
 
@@ -112,7 +142,7 @@ class AddMembersFragment: Fragment() {
         ActivityResultContracts.RequestPermission()) { granted ->
 
         if (granted) {
-            val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             readContactActivityResult.launch(intent)
         }
     }
@@ -121,37 +151,36 @@ class AddMembersFragment: Fragment() {
         ActivityResultContracts.StartActivityForResult()) { result ->
 
         if (result.resultCode == RESULT_OK) {
-
             try {
-
-                val uriContactData: Uri = result.data?.data!!
-
-                val c: Cursor = requireActivity().contentResolver.query(
-                    uriContactData,
-                    null, null, null, null
-                )!!
-
+                val uriContactData: Uri? = result.data?.data
+                val cursor: Cursor? = uriContactData?.let {
+                    activity?.contentResolver?.query(
+                        it,
+                        null, null, null, null
+                    )
+                }
                 var number = ""
+                cursor?.count?.let { count ->
+                    if (count >= 1) {
+                        if (cursor.moveToFirst()) {
+                            val id = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
+                            val hasPhone = cursor.getString(cursor.getColumnIndex(
+                                ContactsContract.Contacts.HAS_PHONE_NUMBER))
 
-                if (c.count >= 1) {
-                    if (c.moveToFirst()) {
-                        val id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
-                        val hasPhone = c.getString(c.getColumnIndex(
-                            ContactsContract.Contacts.HAS_PHONE_NUMBER))
+                            if (hasPhone.equals("1", true)) {
+                                val phones: Cursor = requireActivity().contentResolver.query(
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
+                                    null, null
+                                )!!
+                                phones.moveToFirst()
+                                number = phones.getString(phones.getColumnIndex("data1"))
+                            }
+                            val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
 
-                        if (hasPhone.equals("1", true)) {
-                            val phones: Cursor = requireActivity().contentResolver.query(
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
-                                null, null
-                            )!!
-                            phones.moveToFirst()
-                            number = phones.getString(phones.getColumnIndex("data1"))
+                            binding?.inputName?.setText(name)
+                            binding?.inputMobile?.setText(number)
                         }
-                        val name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-
-                        binding.inputName.setText(name)
-                        binding.inputMobile.setText(number)
                     }
                 }
 

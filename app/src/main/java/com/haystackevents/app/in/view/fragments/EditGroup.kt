@@ -25,7 +25,7 @@ import retrofit2.Response
 
 class EditGroup: Fragment() {
 
-    private lateinit var binding: FragmentEditGroupBinding
+    private var binding: FragmentEditGroupBinding? = null
     
     private var groupName: String? = null
     private var groupDesc: String? = null
@@ -36,9 +36,9 @@ class EditGroup: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentEditGroupBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,16 +46,16 @@ class EditGroup: Fragment() {
 
         groupId = arguments?.getString(GROUP_ID)
 
-        binding.toolbarEditGroup.setNavigationOnClickListener {
+        binding?.toolbarEditGroup?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.btnUpdateEditGroup.setOnClickListener {
-            groupName = binding.inputGroupName.text.toString().trim()
-            groupDesc = binding.inputGroupDesc.text.toString().trim()
+        binding?.btnUpdateEditGroup?.setOnClickListener {
+            groupName = binding?.inputGroupName?.text.toString().trim()
+            groupDesc = binding?.inputGroupDesc?.text.toString().trim()
 
             if (TextUtils.isEmpty(groupName) || TextUtils.isEmpty(groupDesc)){
-                showSnackBar(binding.constraintEditGroup, "Please enter all fields")
+                showSnackBar(binding?.constraintEditGroup, "Please enter all fields")
                 return@setOnClickListener
             }
 
@@ -64,8 +64,8 @@ class EditGroup: Fragment() {
     }
 
     private fun updateEditedGroup() {
-        binding.btnUpdateEditGroup.visibility = INVISIBLE
-        binding.animationLoader.visibility = VISIBLE
+        binding?.btnUpdateEditGroup?.visibility = INVISIBLE
+        binding?.animationLoader?.visibility = VISIBLE
         val userId = SessionManager.instance.getUserId()
         Repository.editGroup(groupName!!, groupDesc!!, groupId!!, userId)
             .enqueue(object : Callback<DefaultResponse>{
@@ -91,14 +91,14 @@ class EditGroup: Fragment() {
 
                     }catch (e: Exception){e.printStackTrace()}
 
-                    binding.btnUpdateEditGroup.visibility = VISIBLE
-                    binding.animationLoader.visibility = INVISIBLE
+                    binding?.btnUpdateEditGroup?.visibility = VISIBLE
+                    binding?.animationLoader?.visibility = INVISIBLE
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    showSnackBar(binding.constraintEditGroup, t.localizedMessage!!)
-                    binding.btnUpdateEditGroup.visibility = VISIBLE
-                    binding.animationLoader.visibility = INVISIBLE
+                    showSnackBar(binding?.constraintEditGroup, t.localizedMessage!!)
+                    binding?.btnUpdateEditGroup?.visibility = VISIBLE
+                    binding?.animationLoader?.visibility = INVISIBLE
                 }
 
             })

@@ -45,7 +45,7 @@ import retrofit2.Response
 
 class EditMember: Fragment() {
 
-    private lateinit var binding: FragmentEditMemberBinding
+    private var binding: FragmentEditMemberBinding? = null
     private var status: String? = null
     private var groupId: String? = null
     private var name: String? = null
@@ -60,9 +60,9 @@ class EditMember: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentEditMemberBinding.inflate(layoutInflater)
-        return binding.root
+        return binding?.root
     }
 
 
@@ -78,38 +78,38 @@ class EditMember: Fragment() {
                 email = arguments?.getString(MEMBER_EMAIL)
                 phone = arguments?.getString(MEMBER_PHONE)
 
-                binding.inputName.setText(name)
-                binding.inputEmail.setText(email)
-                binding.inputMobile.setText(phone)
+                binding?.inputName?.setText(name)
+                binding?.inputEmail?.setText(email)
+                binding?.inputMobile?.setText(phone)
             }
             "2" -> {
                 events = arguments?.getSerializable(ARG_SERIALIZABLE) as? Event
                 position = arguments?.getInt(POSITION)
 
-                binding.inputName.setText(events?.allmembers!![position!!].member)
-                binding.inputEmail.setText(events?.allmembers!![position!!].email)
-                binding.inputMobile.setText(events?.allmembers!![position!!].number)
+                binding?.inputName?.setText(events?.allmembers!![position!!].member)
+                binding?.inputEmail?.setText(events?.allmembers!![position!!].email)
+                binding?.inputMobile?.setText(events?.allmembers!![position!!].number)
             }
             else -> {
-                binding.btnUpdate.text = "Add Member"
+                binding?.btnUpdate?.text = "Add Member"
             }
         }
 
-        binding.toolbarEditMember.setNavigationOnClickListener {
+        binding?.toolbarEditMember?.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.constraintEditMember.setOnTouchListener { view, motionEvent ->
+        binding?.constraintEditMember?.setOnTouchListener { view, motionEvent ->
             when(motionEvent.action){
                 ACTION_UP -> {
-                    binding.constraintEditMember.hideKeyboard()
+                    binding?.constraintEditMember?.hideKeyboard()
                     return@setOnTouchListener true
                 }
                 else -> return@setOnTouchListener false
             }
         }
 
-        binding.btnAddressBook.setOnClickListener {
+        binding?.btnAddressBook?.setOnClickListener {
             activity?.let { activity ->
                 if (ContextCompat.checkSelfPermission(
                         activity,
@@ -125,13 +125,17 @@ class EditMember: Fragment() {
             }
         }
 
-        binding.btnUpdate.setOnClickListener {
-            name = binding.inputName.text.toString().trim()
-            email = binding.inputEmail.text.toString().trim()
-            phone = binding.inputMobile.text.toString().trim()
+        binding?.btnUpdate?.setOnClickListener {
+            name = binding?.inputName?.text.toString().trim()
+            email = binding?.inputEmail?.text.toString().trim()
+            phone = binding?.inputMobile?.text.toString().trim()
 
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)){
-                showSnackBar(binding.constraintEditMember, "Please enter all the fields")
+            if (TextUtils.isEmpty(name)) {
+                showSnackBar(binding?.constraintEditMember, "Please Enter Name")
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(email) && TextUtils.isEmpty(phone)) {
+                showSnackBar(binding?.constraintEditMember, "Email or Phone is mandatory")
                 return@setOnClickListener
             }
 
@@ -181,8 +185,8 @@ class EditMember: Fragment() {
                             }
                             val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
 
-                            binding.inputName.setText(name)
-                            binding.inputMobile.setText(number)
+                            binding?.inputName?.setText(name)
+                            binding?.inputMobile?.setText(number)
                         }
                     }
                 }
@@ -223,7 +227,7 @@ class EditMember: Fragment() {
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    showSnackBar(binding.constraintEditMember, t.localizedMessage!!)
+                    showSnackBar(binding?.constraintEditMember, t.localizedMessage!!)
                     ProgressCaller.hideProgressDialog()
                 }
 
@@ -255,7 +259,7 @@ class EditMember: Fragment() {
                 }
 
                 override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    showSnackBar(binding.constraintEditMember, t.localizedMessage!!)
+                    showSnackBar(binding?.constraintEditMember, t.localizedMessage!!)
                     ProgressCaller.hideProgressDialog()
                 }
             })

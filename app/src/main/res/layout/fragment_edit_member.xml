@@ -55,7 +55,7 @@
                 android:fontFamily="@font/lato"
                 android:hint="@string/first_name"
                 android:imeOptions="actionNext"
-                android:inputType="textEmailAddress"
+                android:inputType="textPersonName|textCapWords"
                 android:singleLine="true"
                 android:textSize="@dimen/font_16sp"
                 app:layout_constraintEnd_toEndOf="parent"
