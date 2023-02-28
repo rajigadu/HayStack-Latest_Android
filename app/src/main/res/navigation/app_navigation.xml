@@ -214,7 +214,7 @@
             app:destination="@id/dateRangeFragment" />
         <action
             android:id="@+id/action_searchFragment_to_manualSearch"
-            app:destination="@id/manualSearch" />
+            app:destination="@id/manualSearchMapScreen" />
         <action
             android:id="@+id/action_searchFragment_to_eventsInfoFragment"
             app:destination="@id/eventsInfoFragment" />
@@ -285,4 +285,12 @@
         android:name="com.haystackevents.app.in.view.fragments.EditMember"
         android:label="EditMember"
         tools:layout="@layout/fragment_edit_member"/>
+    <fragment
+        android:id="@+id/manualSearchMapScreen"
+        android:name="com.haystackevents.app.in.view.fragments.ManualSearchMapScreen"
+        android:label="ManualSearchMapScreen" >
+        <action
+            android:id="@+id/action_manualSearchMapScreen_to_dateRangeFragment"
+            app:destination="@id/dateRangeFragment" />
+    </fragment>
 </navigation>

@@ -318,10 +318,9 @@ class SignUpActivity: AppCompatActivity() {
             object : Callback<States>{
                 override fun onResponse(call: Call<States>, response: Response<States>) {
                     try {
-
                         if (response.isSuccessful){
                             if (response.body()?.status == "1"){
-                                if (response.body()?.data?.size!! > 0){
+                                if (response.body()?.data?.isNotEmpty() == true){
                                     listStates.clear()
                                     for (item in response.body()?.data!!){
                                         listStates.add(item.name)
