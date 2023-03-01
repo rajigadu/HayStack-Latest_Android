@@ -48,7 +48,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.haystackevents.app.`in`.R
-import com.haystackevents.app.`in`.databinding.FragmentMapSearchBinding
+import com.haystackevents.app.`in`.databinding.FragmentManualMapSearchBinding
 import com.haystackevents.app.`in`.manager.SessionManager
 import com.haystackevents.app.`in`.network.repository.Repository
 import com.haystackevents.app.`in`.network.response.near_events.NearEvents
@@ -82,7 +82,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var lastLocation: Location? = null
     private lateinit var nearEventsAdapter: NearEventsAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var binding: FragmentMapSearchBinding? = null
+    private var binding: FragmentManualMapSearchBinding? = null
     private lateinit var mMap: GoogleMap
     private lateinit var geocoder: Geocoder
     private var currentmarker: Marker? = null
@@ -115,7 +115,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMapSearchBinding.inflate(layoutInflater)
+        binding = FragmentManualMapSearchBinding.inflate(layoutInflater)
         return binding?.root
     }
 
@@ -150,7 +150,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
-            findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
+            //findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
         }
 
         binding?.bottomSheetLayout?.btnManualSearch?.setOnClickListener {
@@ -158,7 +158,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             searchEvent?.searchType = "manual"
             searchEvent?.distanceMile = distanceInMile
             val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
-            findNavController().navigate(R.id.action_searchFragment_to_manualSearch, bundle)
+            //findNavController().navigate(R.id.action_searchFragment_to_manualSearch, bundle)
         }
 
         binding?.addressSearchView?.setOnTouchListener { view, motionEvent ->

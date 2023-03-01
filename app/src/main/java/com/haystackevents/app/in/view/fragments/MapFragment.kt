@@ -150,7 +150,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
-            findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
+            //findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
         }
 
         binding?.bottomSheetLayout?.btnManualSearch?.setOnClickListener {
@@ -158,7 +158,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             searchEvent?.searchType = "manual"
             searchEvent?.distanceMile = distanceInMile
             val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
-            findNavController().navigate(R.id.action_searchFragment_to_manualSearch, bundle)
+            findNavController().navigate(R.id.action_eventsMapFragment_to_manualSearchMapScreen, bundle)
         }
 
         binding?.addressSearchView?.setOnTouchListener { view, motionEvent ->
@@ -404,7 +404,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                 //Log.e("TAG", "lat: $lat  lon: $lon")
                 //val currentLatLong = LatLng(location.latitude, location.longitude)
                 
-                val currentLatLong = LatLng(lat!!.toDouble(), lon!!.toDouble())
+                val currentLatLong = lon?.toDouble()?.let { lat?.toDouble()
+                    ?.let { it1 -> LatLng(it1, it) } }
                 setLocationAddress(currentLatLong)
                 //Log.e("TAG", "setupMap:")
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 16f))
@@ -449,7 +450,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         }
     }
 
-    private fun setLocationAddress(currentLatLong: LatLng) {
+    private fun setLocationAddress(currentLatLong: LatLng?) {
         geocoder = Geocoder(requireContext(), Locale.getDefault())
 
         val addresses: List<Address>?
@@ -457,20 +458,22 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
         try {
 
-            addresses = geocoder.getFromLocation(
+            addresses = currentLatLong?.longitude?.let {
+                geocoder.getFromLocation(
                     currentLatLong.latitude,
-            currentLatLong.longitude,
-            1
-            )
-            addressLine = addresses[0].getAddressLine(0)
+                    it,
+                    1
+                )
+            }
+            addressLine = addresses?.firstOrNull()?.getAddressLine(0)
 
-            val address = addresses[0]
-            country = address.countryName
-            state = address.adminArea
-            city = address.locality
-            zip = address.postalCode
-            latitude = address.latitude.toString()
-            longitude = address.longitude.toString()
+            val address = addresses?.firstOrNull()
+            country = address?.countryName
+            state = address?.adminArea
+            city = address?.locality
+            zip = address?.postalCode
+            latitude = address?.latitude.toString()
+            longitude = address?.longitude.toString()
 
         }catch (e: Exception){e.printStackTrace()}
 
@@ -481,17 +484,18 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         }
     }
 
-    private fun placeMarkerOnMap(currentLatLong: LatLng, addressLine: String) {
+    private fun placeMarkerOnMap(currentLatLong: LatLng?, addressLine: String) {
+        currentLatLong?.let {
+            if (currentmarker == null){
+                val markerOptions = MarkerOptions().position(currentLatLong)
+                markerOptions.title(addressLine)
+                markerOptions.icon(bitmapDescriptor())
+                currentmarker = mMap.addMarker(markerOptions)
 
-        if (currentmarker == null){
-            val markerOptions = MarkerOptions().position(currentLatLong)
-            markerOptions.title(addressLine)
-            markerOptions.icon(bitmapDescriptor())
-            currentmarker = mMap.addMarker(markerOptions)
-
-        }else{
-            currentmarker?.title = addressLine
-            currentmarker?.position = currentLatLong
+            }else{
+                currentmarker?.title = addressLine
+                currentmarker?.position = currentLatLong
+            }
         }
     }
 
@@ -667,7 +671,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             ARG_OBJECTS to "Near Events",
             ARG_SERIALIZABLE to nearEvents
         )
-        findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
+        //findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
     }
 
 }
