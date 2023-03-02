@@ -279,10 +279,10 @@ object Repository {
     fun eventAddToAttend(eventId: String, hostId: String): Call<AddAttendEvent> = client.addAttendEvents(
         eventId, SessionManager.instance.getUserId(), hostId)
 
-    fun getNearEvents(nearEvents: GetNearEvents): Call<NearEvents> = client.nearEvents(
-        nearEvents.currentDate, nearEvents.distanceInMile, nearEvents.searchType,
-        nearEvents.city, nearEvents.lat, nearEvents.lon, nearEvents.endTime, nearEvents.category,
-        nearEvents.id, nearEvents.nationWide
+    fun getNearEvents(nearEvents: GetNearEvents?): Call<NearEvents> = client.nearEvents(
+        nearEvents?.currentDate, nearEvents?.distanceInMile, nearEvents?.searchType,
+        nearEvents?.city, nearEvents?.lat, nearEvents?.lon, nearEvents?.endTime, nearEvents?.category,
+        nearEvents?.id, nearEvents?.nationWide
     )
 
     fun deleteMyEvents(eventId: String, userId: String?): Call<DefaultResponse> = client.deleteMyEvents(eventId, userId)

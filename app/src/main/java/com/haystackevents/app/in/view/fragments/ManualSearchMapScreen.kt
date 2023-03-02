@@ -47,14 +47,17 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.haystackevents.app.`in`.R
 import com.haystackevents.app.`in`.databinding.FragmentManualMapSearchBinding
 import com.haystackevents.app.`in`.manager.SessionManager
 import com.haystackevents.app.`in`.network.repository.Repository
+import com.haystackevents.app.`in`.network.response.countries.Countries
 import com.haystackevents.app.`in`.network.response.near_events.NearEvents
 import com.haystackevents.app.`in`.network.response.near_events.NearEventsData
 import com.haystackevents.app.`in`.network.response.post_data.GetNearEvents
 import com.haystackevents.app.`in`.network.response.search_events.SearchByEvent
+import com.haystackevents.app.`in`.network.response.states.States
 import com.haystackevents.app.`in`.utils.AppConstants
 import com.haystackevents.app.`in`.utils.Extensions
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
@@ -92,7 +95,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var searchEvent: SearchByEvent? = null
     private var nationWide: String? = "0"
     private var distanceInMile: String? = "0"
-    private lateinit var nearEvent: GetNearEvents
+    private var nearEvent: GetNearEvents? = null
     private var listLatLng = arrayListOf<MapMarkers>()
     private var lastClickTime: Long = 0
     private var currentLatLng: LatLng? = null
@@ -105,6 +108,12 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var longitude: String? = null
     private var isNearEventsCalled:Boolean = false
 
+    private var selectedCountry: String? = "United States"
+    private var listStates = arrayListOf<String>()
+
+    private var listCountries = arrayListOf<String>()
+
+    private var selectedState = ""
 
     data class MapMarkers(
         val latlng: LatLng,
@@ -124,6 +133,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         super.onViewCreated(view, savedInstanceState)
 
         initiateView()
+        getCountriesList()
 
         clickListeners()
 
@@ -133,9 +143,20 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private fun clickListeners() {
         binding?.linearLayout?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
         binding?.sliderButton?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
+        binding?.manualSearchView?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
 
         binding?.toolbarSearch?.setNavigationOnClickListener {
             findNavController().popBackStack()
+        }
+
+        binding?.manualSearchView?.setOnClickListener {
+            binding?.manualSearchLayout?.let { view ->
+                TransitionManager.beginDelayedTransition(
+                    view,
+                    AutoTransition()
+                )
+                view.isVisible = !view.isVisible
+            }
         }
 
         binding?.bottomSheetLayout?.btnContinue?.setOnClickListener {
@@ -150,33 +171,10 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
-            //findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
+            findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
         }
 
-        binding?.bottomSheetLayout?.btnManualSearch?.setOnClickListener {
-            searchEvent?.nationWide = nationWide!!
-            searchEvent?.searchType = "manual"
-            searchEvent?.distanceMile = distanceInMile
-            val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
-            //findNavController().navigate(R.id.action_searchFragment_to_manualSearch, bundle)
-        }
-
-        binding?.addressSearchView?.setOnTouchListener { view, motionEvent ->
-            when (motionEvent.action){
-                MotionEvent.ACTION_UP -> {
-                    if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
-                        return@setOnTouchListener false
-                    }
-                    lastClickTime = SystemClock.elapsedRealtime()
-                    val intent = Autocomplete.IntentBuilder(
-                        AutocompleteActivityMode.FULLSCREEN, fields!!
-                    ).build(requireContext())
-                    resultLauncher.launch(intent)
-                    return@setOnTouchListener true
-                }
-                else -> return@setOnTouchListener false
-            }
-        }
+        binding?.bottomSheetLayout?.btnManualSearch?.isVisible = false
 
         binding?.bottomSheetLayout?.checkNationWide?.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -233,6 +231,191 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         binding?.sliderButton?.setOnClickListener {
             animateEventsListVisibility()
         }
+
+        binding?.btnContinue?.setOnClickListener {
+            if (validated()){
+                getEventLatLong()
+                //val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
+                //findNavController().navigate(R.id.action_manualSearch_to_dateRangeFragment, bundle)
+            }
+        }
+
+        binding?.inputCountry?.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action){
+                MotionEvent.ACTION_UP -> {
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                        return@setOnTouchListener false
+                    }
+                    lastClickTime = SystemClock.elapsedRealtime()
+                    showCountriesListDialogView()
+                    return@setOnTouchListener true
+                }
+                else -> return@setOnTouchListener false
+            }
+        }
+
+        binding?.inputState?.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action){
+                MotionEvent.ACTION_UP -> {
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                        return@setOnTouchListener false
+                    }
+                    lastClickTime = SystemClock.elapsedRealtime()
+                    showStatesListDialog()
+                    return@setOnTouchListener true
+                }
+                else -> return@setOnTouchListener false
+            }
+        }
+    }
+
+    private fun getEventLatLong() {
+        val geoCoder = Geocoder(requireContext())
+        val listAddress: List<Address>
+        val locationName = searchEvent?.city + "," + searchEvent?.city + "," + searchEvent?.state +
+                "," + searchEvent?.zipcode
+
+        try {
+            listAddress = geoCoder.getFromLocationName(locationName, 5)
+            if (listAddress != null){
+                val location: Address = listAddress[0]
+                searchEvent?.latitude = location.latitude.toString()
+                searchEvent?.longitude = location.longitude.toString()
+            }
+
+        }catch (e: java.lang.Exception){e.printStackTrace()}
+        //nearestEvents()
+    }
+
+    private fun validated(): Boolean {
+        searchEvent?.country = binding?.inputCountry?.text.toString().trim()
+        searchEvent?.state = binding?.inputState?.text.toString().trim()
+        searchEvent?.zipcode = binding?.inputZipCode?.text.toString().trim()
+        searchEvent?.city = binding?.inputCity?.text?.toString()?.trim()
+        searchEvent?.address = binding?.inputAddress?.text?.toString()?.trim()
+
+        when {
+            searchEvent?.country?.isEmpty() == true -> {
+                binding?.inputCountry?.error = "Select Your Country"
+                binding?.inputCountry?.requestFocus()
+                return false
+            }
+
+            searchEvent?.state?.isEmpty() == true -> {
+                binding?.inputState?.error = "Select Your State"
+                binding?.inputState?.requestFocus()
+                return false
+            }
+
+//            searchEvent?.city?.isEmpty() == true -> {
+//                longSnackBar("Enter Your City", binding?.constraintManualSearch)
+//                return false
+//            }
+//
+//            searchEvent?.zipcode?.isEmpty() == true -> {
+//                longSnackBar("Enter Zip code", binding?.constraintManualSearch)
+//                return false
+//            }
+
+            else -> return true
+        }
+
+    }
+
+    private fun showStatesListDialog() {
+        var array = arrayOf<String>()
+        array = listStates.toArray(array)
+
+        MaterialAlertDialogBuilder(requireContext(), R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
+            .setTitle("Select Event State")
+            .setCancelable(false)
+            .setPositiveButton("Ok"){ dialog, which ->
+                binding?.inputState?.setText(selectedState)
+            }
+            .setSingleChoiceItems(array,-1){ dialog, which ->
+                selectedState = array[which]
+            }
+            .show()
+    }
+
+    private fun getCountriesList() {
+        context?.let { ProgressCaller.showProgressDialog(it) }
+        Repository.getAllCountries().enqueue(object : Callback<Countries>{
+            override fun onResponse(call: Call<Countries>, response: Response<Countries>) {
+                try {
+
+                    if (response.isSuccessful){
+                        if (response.body()?.status == "1"){
+                            if (response.body()?.data?.size!! > 0){
+                                listCountries.clear()
+                                for (elements in response.body()?.data!!){
+                                    listCountries.add(elements.name)
+                                }
+                            }
+                        }
+                    }
+                    ProgressCaller.hideProgressDialog()
+
+                }catch (e: Exception){e.printStackTrace()}
+            }
+
+            override fun onFailure(call: Call<Countries>, t: Throwable) {
+                context?.let { Toast.makeText(
+                    it,t.message, Toast.LENGTH_SHORT).show() }
+                ProgressCaller.hideProgressDialog()
+            }
+
+        })
+    }
+
+    private fun showCountriesListDialogView() {
+        var array = arrayOf<String>()
+        array = listCountries.toArray(array)
+
+        MaterialAlertDialogBuilder(requireContext(), R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
+            .setTitle("Select Event Country")
+            .setCancelable(false)
+            .setPositiveButton("Ok"){ dialog, which ->
+                context?.let { ProgressCaller.showProgressDialog(it) }
+                getStatesList()
+                binding?.inputCountry?.setText(selectedCountry)
+                binding?.inputState?.setText("")
+                selectedState = ""
+            }
+            .setSingleChoiceItems(array,-1){ dialog, which ->
+                selectedCountry = array[which]
+            }
+            .show()
+    }
+
+    private fun getStatesList() {
+        Repository.getAllStatesOfTheCountry(selectedCountry!!).enqueue(
+            object : Callback<States> {
+                override fun onResponse(call: Call<States>, response: Response<States>) {
+                    try {
+
+                        if (response.isSuccessful){
+                            if (response.body()?.status == "1"){
+                                if (response.body()?.data?.size!! > 0){
+                                    listStates.clear()
+                                    for (item in response.body()?.data!!){
+                                        listStates.add(item.name)
+                                    }
+                                }
+                            }
+                        }
+
+                    }catch (e: Exception){e.printStackTrace()}
+                    ProgressCaller.hideProgressDialog()
+                }
+
+                override fun onFailure(call: Call<States>, t: Throwable) {
+                    context?.let { Toast.makeText(
+                        it,t.message, Toast.LENGTH_SHORT).show() }
+                    ProgressCaller.hideProgressDialog()
+                }
+
+            })
     }
 
     private fun getEventsWithInDistance() {
@@ -335,6 +518,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         )
 
         searchEvent = arguments?.getSerializable(AppConstants.ARG_SERIALIZABLE) as SearchByEvent
+        binding?.inputCountry?.setText(selectedCountry)
         //Log.e("TAG", "searchEvent: $searchEvent")
 
         BottomSheetBehavior.from(binding?.bottomSheetLayout?.bottomSheet!!).apply {
@@ -400,9 +584,9 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             if (location != null){
                 lastLocation = location
 
-                val lat = if (nearEvent.lat != null) nearEvent.lat
+                val lat = if (nearEvent?.lat != null) nearEvent?.lat
                 else SessionManager.instance.sPreference.getString(AppConstants.USER_LATITUDE, "")
-                val lon = if (nearEvent.lon != null) nearEvent.lon
+                val lon = if (nearEvent?.lon != null) nearEvent?.lon
                 else SessionManager.instance.sPreference.getString(AppConstants.USER_LONGITUDE, "")
                 //Log.e("TAG", "lat: $lat  lon: $lon")
                 //val currentLatLong = LatLng(location.latitude, location.longitude)
@@ -423,7 +607,6 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val place = Autocomplete.getPlaceFromIntent(data!!)
-            binding?.addressSearchView?.setText(place.address)
 
             try {
 
@@ -480,7 +663,6 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         if (addressLine != null){
             placeMarkerOnMap(currentLatLong, addressLine)
             //Log.e("TAG", "called latLng: $currentLatLong")
-            binding?.addressSearchView?.setText(addressLine, true)
         }
     }
 
@@ -528,13 +710,13 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         binding?.linearLayout?.isVisible = false
 
         //nearEvent.deviceType = DEVICE_TYPE
-        nearEvent.lat = currentLatLong.latitude.toString()
-        nearEvent.lon = currentLatLong.longitude.toString()
-        nearEvent.id = SessionManager.instance.getUserId()
-        nearEvent.category = searchEvent?.category!!
+        nearEvent?.lat = currentLatLong.latitude.toString()
+        nearEvent?.lon = currentLatLong.longitude.toString()
+        nearEvent?.id = SessionManager.instance.getUserId()
+        nearEvent?.category = searchEvent?.category!!
         //nearEvent.distanceInMile = binding.bottomSheetLayout.mapRadius.text.toString().trim()
-        nearEvent.nationWide = nationWide!!
-        nearEvent.distanceInMile = distanceInMile!!
+        nearEvent?.nationWide = nationWide!!
+        nearEvent?.distanceInMile = distanceInMile!!
 
         //Log.e("TAG", "nearEvent: $nearEvent")
 
