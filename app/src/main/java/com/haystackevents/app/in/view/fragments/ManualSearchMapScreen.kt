@@ -132,8 +132,8 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initiateView()
         getCountriesList()
+        initiateView()
 
         clickListeners()
 
@@ -339,7 +339,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun getCountriesList() {
-        context?.let { ProgressCaller.showProgressDialog(it) }
+        //context?.let { ProgressCaller.showProgressDialog(it) }
         Repository.getAllCountries().enqueue(object : Callback<Countries>{
             override fun onResponse(call: Call<Countries>, response: Response<Countries>) {
                 try {
@@ -702,6 +702,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         super.onResume()
         (activity as MainMenuActivity).hideBottomNav()
         //nearestEvents()
+        getStatesList()
     }
 
     private fun nearestEvents(currentLatLong: LatLng) {
