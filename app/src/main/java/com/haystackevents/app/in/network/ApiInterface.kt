@@ -233,7 +233,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST(ADD_ATTEND_EVENTS)
     fun addAttendEvents(
-        @Field("eventid") eventId: String,
+        @Field("eventid") eventId: String?,
         @Field("id") userId: String?,
         @Field("userid") hostId: String?,
     ): Call<AddAttendEvent>
@@ -241,7 +241,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST(ADD_INTEREST_EVENTS)
     fun addInterestEvents(
-        @Field("eventid") eventId: String,
+        @Field("eventid") eventId: String?,
         @Field("id") hostId: String?,
         @Field("userid") userId: String?,
     ): Call<AddInterestEvents>

@@ -273,10 +273,10 @@ object Repository {
             searchEvents?.longitude, searchEvents?.category, searchEvents?.zipcode, searchEvents?.address)
     }
 
-    fun eventAddToInterested(eventId: String, hostId: String): Call<AddInterestEvents> = client.addInterestEvents(
+    fun eventAddToInterested(eventId: String?, hostId: String?): Call<AddInterestEvents> = client.addInterestEvents(
         eventId, SessionManager.instance.getUserId(), hostId)
 
-    fun eventAddToAttend(eventId: String, hostId: String): Call<AddAttendEvent> = client.addAttendEvents(
+    fun eventAddToAttend(eventId: String?, hostId: String?): Call<AddAttendEvent> = client.addAttendEvents(
         eventId, SessionManager.instance.getUserId(), hostId)
 
     fun getNearEvents(nearEvents: GetNearEvents?): Call<NearEvents> = client.nearEvents(

@@ -39,10 +39,10 @@ import retrofit2.Response
 class EventsInfoFragment: Fragment() {
 
     private var binding: FragmentEventInfoBinding? = null
-    private lateinit var eventInfo: SearchEventsData
-    private lateinit var myEvents: MyEventsData
-    private lateinit var nearestEvents: NearestEventData
-    private lateinit var nearEvents: NearEventsData
+    private var eventInfo: SearchEventsData? = null
+    private var myEvents: MyEventsData? = null
+    private var nearestEvents: NearestEventData? = null
+    private var nearEvents: NearEventsData? = null
 
     private var latitude: String? = null
     private var longitude: String? = null
@@ -63,19 +63,19 @@ class EventsInfoFragment: Fragment() {
 
         when (arguments?.getString(ARG_OBJECTS)) {
             AppConstants.EventTypes.SEARCH_EVENT -> {
-                eventInfo = arguments?.getSerializable(ARG_SERIALIZABLE) as SearchEventsData
+                eventInfo = arguments?.getSerializable(ARG_SERIALIZABLE) as? SearchEventsData
                 setEventInfoData(eventInfo)
             }
             AppConstants.EventTypes.MY_EVENT -> {
-                myEvents = arguments?.getSerializable(ARG_SERIALIZABLE) as MyEventsData
+                myEvents = arguments?.getSerializable(ARG_SERIALIZABLE) as? MyEventsData
                 setMyEventsData(myEvents)
             }
             AppConstants.EventTypes.NEAREST_EVENT -> {
-                nearestEvents = arguments?.getSerializable(ARG_SERIALIZABLE) as NearestEventData
+                nearestEvents = arguments?.getSerializable(ARG_SERIALIZABLE) as? NearestEventData
                 setNearestEventsData(nearestEvents)
             }
             AppConstants.EventTypes.NEAR_EVENT -> {
-                nearEvents = arguments?.getSerializable(ARG_SERIALIZABLE) as NearEventsData
+                nearEvents = arguments?.getSerializable(ARG_SERIALIZABLE) as? NearEventsData
                 setNearEventsData(nearEvents)
             }
         }
@@ -117,29 +117,29 @@ class EventsInfoFragment: Fragment() {
         }
     }
 
-    private fun setNearEventsData(nearEvents: NearEventsData) {
+    private fun setNearEventsData(nearEvents: NearEventsData?) {
         binding?.btnAttend?.visibility = GONE
         binding?.btnInterested?.visibility = GONE
         binding?.btnNotInterested?.visibility = GONE
 
-        binding?.textEventName?.text = nearEvents.event_name
-        binding?.textHostName?.text = nearEvents.hostname
-        binding?.textContactInfo?.text = nearEvents.contactinfo
-        binding?.textCountry?.text = nearEvents.country
-        binding?.textState?.text = nearEvents.state
-        binding?.textCity?.text = nearEvents.city
-        binding?.textZipCode?.text = nearEvents.zipcode
-        binding?.textStreetAddress?.text = nearEvents.streetaddress
-        binding?.textStartDate?.text = nearEvents.startdate
-        binding?.textStartTime?.text = nearEvents.starttime
-        binding?.textEndDate?.text = nearEvents.enddate
-        binding?.textEndTime?.text = nearEvents.endtime
-        binding?.textEventDesciption?.setText(nearEvents.event_description)
+        binding?.textEventName?.text = nearEvents?.event_name
+        binding?.textHostName?.text = nearEvents?.hostname
+        binding?.textContactInfo?.text = nearEvents?.contactinfo
+        binding?.textCountry?.text = nearEvents?.country
+        binding?.textState?.text = nearEvents?.state
+        binding?.textCity?.text = nearEvents?.city
+        binding?.textZipCode?.text = nearEvents?.zipcode
+        binding?.textStreetAddress?.text = nearEvents?.streetaddress
+        binding?.textStartDate?.text = nearEvents?.startdate
+        binding?.textStartTime?.text = nearEvents?.starttime
+        binding?.textEndDate?.text = nearEvents?.enddate
+        binding?.textEndTime?.text = nearEvents?.endtime
+        binding?.textEventDesciption?.setText(nearEvents?.event_description)
 
-        latitude = nearEvents.latitude
-        longitude = nearEvents.longitude
+        latitude = nearEvents?.latitude
+        longitude = nearEvents?.longitude
 
-        nearEvents.photo?.let { photo ->
+        nearEvents?.photo?.let { photo ->
             binding?.eventImage?.let {
                 Glide.with(requireContext())
                     .load(IMAGE_BASE_URL + photo)
@@ -150,29 +150,29 @@ class EventsInfoFragment: Fragment() {
         binding?.imgProgress?.isVisible = false
     }
 
-    private fun setNearestEventsData(nearestEvents: NearestEventData) {
+    private fun setNearestEventsData(nearestEvents: NearestEventData?) {
         binding?.btnAttend?.visibility = GONE
         binding?.btnInterested?.visibility = GONE
         binding?.btnNotInterested?.visibility = GONE
 
-        binding?.textEventName?.text = nearestEvents.event_name
-        binding?.textHostName?.text = nearestEvents.hostname
-        binding?.textContactInfo?.text = nearestEvents.contactinfo
-        binding?.textCountry?.text = nearestEvents.country
-        binding?.textState?.text = nearestEvents.state
-        binding?.textCity?.text = nearestEvents.city
-        binding?.textZipCode?.text = nearestEvents.zipcode
-        binding?.textStreetAddress?.text = nearestEvents.streetaddress
-        binding?.textStartDate?.text = nearestEvents.startdate
-        binding?.textStartTime?.text = nearestEvents.starttime
-        binding?.textEndDate?.text = nearestEvents.enddate
-        binding?.textEndTime?.text = nearestEvents.endtime
-        binding?.textEventDesciption?.setText(nearestEvents.event_description)
+        binding?.textEventName?.text = nearestEvents?.event_name
+        binding?.textHostName?.text = nearestEvents?.hostname
+        binding?.textContactInfo?.text = nearestEvents?.contactinfo
+        binding?.textCountry?.text = nearestEvents?.country
+        binding?.textState?.text = nearestEvents?.state
+        binding?.textCity?.text = nearestEvents?.city
+        binding?.textZipCode?.text = nearestEvents?.zipcode
+        binding?.textStreetAddress?.text = nearestEvents?.streetaddress
+        binding?.textStartDate?.text = nearestEvents?.startdate
+        binding?.textStartTime?.text = nearestEvents?.starttime
+        binding?.textEndDate?.text = nearestEvents?.enddate
+        binding?.textEndTime?.text = nearestEvents?.endtime
+        binding?.textEventDesciption?.setText(nearestEvents?.event_description)
 
-        latitude = nearestEvents.latitude
-        longitude = nearestEvents.longitude
+        latitude = nearestEvents?.latitude
+        longitude = nearestEvents?.longitude
 
-        nearestEvents.photo?.let { photo ->
+        nearestEvents?.photo?.let { photo ->
             binding?.eventImage?.let {
                 Glide.with(requireContext())
                     .load(IMAGE_BASE_URL + photo)
@@ -183,29 +183,29 @@ class EventsInfoFragment: Fragment() {
         binding?.imgProgress?.isVisible = false
     }
 
-    private fun setMyEventsData(myEvents: MyEventsData) {
+    private fun setMyEventsData(myEvents: MyEventsData?) {
         binding?.btnAttend?.visibility = GONE
         binding?.btnInterested?.visibility = GONE
         binding?.btnNotInterested?.visibility = GONE
 
-        binding?.textEventName?.text = myEvents.event_name
-        binding?.textHostName?.text = myEvents.hostname
-        binding?.textContactInfo?.text = myEvents.contactinfo
-        binding?.textCountry?.text = myEvents.country
-        binding?.textState?.text = myEvents.state
-        binding?.textCity?.text = myEvents.city
-        binding?.textZipCode?.text = myEvents.zipcode
-        binding?.textStreetAddress?.text = myEvents.streetaddress
-        binding?.textStartDate?.text = myEvents.startdate
-        binding?.textStartTime?.text = myEvents.starttime
-        binding?.textEndDate?.text = myEvents.enddate
-        binding?.textEndTime?.text = myEvents.endtime
-        binding?.textEventDesciption?.setText(myEvents.event_description)
+        binding?.textEventName?.text = myEvents?.event_name
+        binding?.textHostName?.text = myEvents?.hostname
+        binding?.textContactInfo?.text = myEvents?.contactinfo
+        binding?.textCountry?.text = myEvents?.country
+        binding?.textState?.text = myEvents?.state
+        binding?.textCity?.text = myEvents?.city
+        binding?.textZipCode?.text = myEvents?.zipcode
+        binding?.textStreetAddress?.text = myEvents?.streetaddress
+        binding?.textStartDate?.text = myEvents?.startdate
+        binding?.textStartTime?.text = myEvents?.starttime
+        binding?.textEndDate?.text = myEvents?.enddate
+        binding?.textEndTime?.text = myEvents?.endtime
+        binding?.textEventDesciption?.setText(myEvents?.event_description)
 
-        latitude = myEvents.latitude
-        longitude = myEvents.longitude
+        latitude = myEvents?.latitude
+        longitude = myEvents?.longitude
 
-        myEvents.photo?.let { photo ->
+        myEvents?.photo?.let { photo ->
             binding?.eventImage?.let {
                 Glide.with(requireContext())
                     .load(IMAGE_BASE_URL + photo)
@@ -218,7 +218,7 @@ class EventsInfoFragment: Fragment() {
 
     private fun addEventsToAttend() {
         context?.let { ProgressCaller.showProgressDialog(it) }
-        Repository.eventAddToAttend(eventInfo.id, eventInfo.userid).enqueue(object :Callback<AddAttendEvent>{
+        Repository.eventAddToAttend(eventInfo?.id, eventInfo?.userid).enqueue(object :Callback<AddAttendEvent>{
             override fun onResponse(
                 call: Call<AddAttendEvent>,
                 response: Response<AddAttendEvent>
@@ -251,7 +251,7 @@ class EventsInfoFragment: Fragment() {
 
     private fun addEventsToInterested() {
         context?.let { ProgressCaller.showProgressDialog(it) }
-        Repository.eventAddToInterested(eventInfo.id, eventInfo.userid).enqueue(object
+        Repository.eventAddToInterested(eventInfo?.id, eventInfo?.userid).enqueue(object
             :Callback<AddInterestEvents>{
             override fun onResponse(
                 call: Call<AddInterestEvents>,
@@ -285,29 +285,29 @@ class EventsInfoFragment: Fragment() {
         })
     }
 
-    private fun setEventInfoData(eventInfo: SearchEventsData) {
+    private fun setEventInfoData(eventInfo: SearchEventsData?) {
         binding?.btnAttend?.visibility = VISIBLE
         binding?.btnInterested?.visibility = VISIBLE
         binding?.btnNotInterested?.visibility = VISIBLE
 
-        binding?.textEventName?.text = eventInfo.event_name
-        binding?.textHostName?.text = eventInfo.hostname
-        binding?.textContactInfo?.text = eventInfo.contactinfo
-        binding?.textCountry?.text = eventInfo.country
-        binding?.textState?.text = eventInfo.state
-        binding?.textCity?.text = eventInfo.city
-        binding?.textZipCode?.text = eventInfo.zipcode
-        binding?.textStreetAddress?.text = eventInfo.streetaddress
-        binding?.textStartDate?.text = eventInfo.startdate
-        binding?.textStartTime?.text = eventInfo.starttime
-        binding?.textEndDate?.text = eventInfo.enddate
-        binding?.textEndTime?.text = eventInfo.endtime
-        binding?.textEventDesciption?.setText(eventInfo.event_description)
+        binding?.textEventName?.text = eventInfo?.event_name
+        binding?.textHostName?.text = eventInfo?.hostname
+        binding?.textContactInfo?.text = eventInfo?.contactinfo
+        binding?.textCountry?.text = eventInfo?.country
+        binding?.textState?.text = eventInfo?.state
+        binding?.textCity?.text = eventInfo?.city
+        binding?.textZipCode?.text = eventInfo?.zipcode
+        binding?.textStreetAddress?.text = eventInfo?.streetaddress
+        binding?.textStartDate?.text = eventInfo?.startdate
+        binding?.textStartTime?.text = eventInfo?.starttime
+        binding?.textEndDate?.text = eventInfo?.enddate
+        binding?.textEndTime?.text = eventInfo?.endtime
+        binding?.textEventDesciption?.setText(eventInfo?.event_description)
 
-        latitude = eventInfo.latitude
-        longitude = eventInfo.longitude
+        latitude = eventInfo?.latitude
+        longitude = eventInfo?.longitude
 
-        eventInfo.photo?.let { photo ->
+        eventInfo?.photo?.let { photo ->
             binding?.eventImage?.let {
                 Glide.with(requireContext())
                     .load(IMAGE_BASE_URL + photo)
