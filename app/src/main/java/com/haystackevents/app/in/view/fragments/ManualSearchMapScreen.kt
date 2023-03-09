@@ -274,6 +274,11 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                 AutoTransition()
             )
             view.isVisible = !view.isVisible
+            if (view.isVisible) {
+                binding?.bottomSheetLayout?.bottomSheet?.let { bottomSheet ->
+
+                }
+            }
         }
     }
 

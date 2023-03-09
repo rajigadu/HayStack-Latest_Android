@@ -40,6 +40,7 @@
             android:animateLayoutChanges="true"
             android:visibility="gone"
             app:cardCornerRadius="50dp"
+            app:cardElevation="2dp"
             app:layout_constraintStart_toEndOf="@+id/linearLayout"
             app:layout_constraintTop_toTopOf="@+id/manual_search_cardview">
 
