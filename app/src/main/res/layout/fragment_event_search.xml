@@ -21,6 +21,33 @@
         app:navigationIconTint="@color/black"
         app:titleTextAppearance="@style/ToolbarTitle" />
 
+    <ImageView
+        android:id="@+id/noEventsImage"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:contentDescription="@string/inspect"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/refreshSearchEvents"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/party" />
+
+    <TextView
+        android:id="@+id/noEventsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lato"
+        android:text="@string/no_more_events"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="italic"
+        android:visibility="invisible"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noEventsImage" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshSearchEvents"
         android:layout_width="match_parent"

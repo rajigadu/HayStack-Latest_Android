@@ -34,6 +34,48 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbarSearch" />
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/sliderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+            app:cardCornerRadius="50dp"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="@+id/manual_search_cardview">
+
+            <ImageView
+                android:id="@+id/sliderIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/inspect"
+                app:srcCompat="@drawable/slider_icon_open" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="80dp"
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/google_map"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/manual_search_cardview"
+            app:layout_constraintWidth_percent="0.8">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/eventsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_near_events_list_item" />
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/manual_search_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="15dp"
@@ -218,7 +260,7 @@
                         android:fontFamily="@font/lato"
                         android:hint="@string/select_city"
                         android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:inputType="text|textCapWords"
                         android:singleLine="true"
                         android:textSize="@dimen/font_16sp"
                         app:layout_constraintEnd_toEndOf="@+id/view14"
@@ -246,7 +288,7 @@
                         android:fontFamily="@font/lato"
                         android:hint="@string/enter_address"
                         android:imeOptions="actionDone"
-                        android:inputType="text"
+                        android:inputType="text|textCapWords"
                         android:singleLine="true"
                         android:textSize="@dimen/font_16sp"
                         app:layout_constraintEnd_toEndOf="@+id/view15"
@@ -282,46 +324,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/sliderButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:animateLayoutChanges="true"
-            app:cardCornerRadius="50dp"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout"
-            app:layout_constraintTop_toBottomOf="@+id/addressSearchView">
-
-            <ImageView
-                android:id="@+id/sliderIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/inspect"
-                app:srcCompat="@drawable/slider_icon_open" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            app:layout_constraintWidth_percent="0.8"
-            android:animateLayoutChanges="true"
-            android:layout_marginBottom="80dp"
-            app:layout_constraintBottom_toBottomOf="@+id/google_map"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addressSearchView">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/eventsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_near_events_list_item" />
-
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

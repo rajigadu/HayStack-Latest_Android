@@ -59,8 +59,11 @@ import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
 import com.haystackevents.app.`in`.utils.AppConstants.PERMISSION_REQ_LOCATION
 import com.haystackevents.app.`in`.utils.AppConstants.USER_LATITUDE
 import com.haystackevents.app.`in`.utils.AppConstants.USER_LONGITUDE
+import com.haystackevents.app.`in`.utils.Extensions.getCurrentDate
+import com.haystackevents.app.`in`.utils.Extensions.getCurrentTime
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
 import com.haystackevents.app.`in`.utils.Extensions.showAlertDialog
+import com.haystackevents.app.`in`.utils.FragmentCallback
 import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 import com.haystackevents.app.`in`.view.adapters.NearEventsAdapter
@@ -76,7 +79,7 @@ import java.util.*
 @Suppress("DEPRECATION")
 class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraIdleListener,
-    GoogleMap.OnCameraMoveStartedListener, NearEventsAdapter.NearEventsOnClick {
+    GoogleMap.OnCameraMoveStartedListener {
 
     private lateinit var supportMapFragment: SupportMapFragment
     private var lastLocation: Location? = null
@@ -150,7 +153,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
-            //findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
+            findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
         }
 
         binding?.bottomSheetLayout?.btnManualSearch?.setOnClickListener {
@@ -345,7 +348,15 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         supportMapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
-        nearEventsAdapter = NearEventsAdapter(requireContext())
+        nearEventsAdapter = NearEventsAdapter(fragmentCallback = object : FragmentCallback {
+            override fun onResult(param1: Any?, param2: Any?, param3: Any?) {
+                val bundle = bundleOf(
+                    ARG_OBJECTS to "Near Events",
+                    ARG_SERIALIZABLE to param1 as? NearEventsData
+                )
+                findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
+            }
+        })
         binding?.eventsRecyclerView?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = nearEventsAdapter
@@ -536,6 +547,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         //nearEvent.distanceInMile = binding.bottomSheetLayout.mapRadius.text.toString().trim()
         nearEvent.nationWide = nationWide!!
         nearEvent.distanceInMile = distanceInMile!!
+        nearEvent.currentDate = getCurrentDate()
+        nearEvent.endTime = getCurrentTime()
 
         //Log.e("TAG", "nearEvent: $nearEvent")
 
@@ -561,7 +574,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                                     }
                                     nearEventsList.clear()
                                     nearEventsList.addAll(data)
-                                    nearEventsAdapter.update(nearEventsList, this@MapFragment)
+                                    nearEventsAdapter.update(nearEventsList)
                                     setMarkers(listLatLng)
                                     binding?.sliderButton?.isVisible = true
                                     binding?.sliderIcon?.rotation = 360f
@@ -664,14 +677,6 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         }catch (e: Exception){e.printStackTrace()}
 
         return addressLine!!
-    }
-
-    override fun nearEventClick(nearEvents: NearEventsData) {
-        val bundle = bundleOf(
-            ARG_OBJECTS to "Near Events",
-            ARG_SERIALIZABLE to nearEvents
-        )
-        //findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
     }
 
 }

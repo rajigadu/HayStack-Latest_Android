@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -94,9 +95,14 @@ class EventsSearch: Fragment(), EventSearchListAdapter.EventSearchListItemClick 
                         if (response.body()?.status == "1"){
 
                             if (response.body()?.data != null){
+                                binding?.noEventsImage?.isVisible = false
+                                binding?.noEventsText?.isVisible = false
                                 listSearchedEvents.clear()
                                 listSearchedEvents.addAll(response.body()?.data!!)
                                 eventSearchListAdapter.update(listSearchedEvents)
+                            } else {
+                                binding?.noEventsImage?.isVisible = true
+                                binding?.noEventsText?.isVisible = true
                             }
 
                         }else{

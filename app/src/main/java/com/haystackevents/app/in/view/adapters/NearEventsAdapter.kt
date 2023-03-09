@@ -7,16 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.haystackevents.app.`in`.databinding.LayoutNearEventsListItemBinding
 import com.haystackevents.app.`in`.network.response.near_events.NearEventsData
+import com.haystackevents.app.`in`.utils.FragmentCallback
 import com.haystackevents.app.`in`.view.fragments.MapFragment
 import java.util.*
 
-class NearEventsAdapter(var context: Context)
+class NearEventsAdapter(var fragmentCallback: FragmentCallback?)
     : RecyclerView.Adapter<NearEventsAdapter.ViewHolder>() {
 
     private var listNearEvents = arrayListOf<NearEventsData>()
-    private var clickListener: NearEventsOnClick? = null
-
-
 
     inner class ViewHolder(val binding: LayoutNearEventsListItemBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
@@ -26,7 +24,7 @@ class NearEventsAdapter(var context: Context)
             binding.hostNumber.text = nearEvents.contactinfo
 
             binding.eventItem.setOnClickListener {
-                clickListener?.nearEventClick(nearEvents)
+                fragmentCallback?.onResult(nearEvents)
             }
         }
     }
@@ -49,13 +47,9 @@ class NearEventsAdapter(var context: Context)
 
     override fun getItemCount(): Int = listNearEvents.size
 
-    fun update(listNearestEvents: ArrayList<NearEventsData>, listener: MapFragment){
+    @SuppressLint("NotifyDataSetChanged")
+    fun update(listNearestEvents: ArrayList<NearEventsData>){
         this.listNearEvents = listNearestEvents
-        this.clickListener = listener
         notifyDataSetChanged()
-    }
-
-    interface NearEventsOnClick{
-        fun nearEventClick(nearEvents: NearEventsData)
     }
 }

@@ -60,7 +60,10 @@ import com.haystackevents.app.`in`.network.response.search_events.SearchByEvent
 import com.haystackevents.app.`in`.network.response.states.States
 import com.haystackevents.app.`in`.utils.AppConstants
 import com.haystackevents.app.`in`.utils.Extensions
+import com.haystackevents.app.`in`.utils.Extensions.getCurrentDate
+import com.haystackevents.app.`in`.utils.Extensions.getCurrentTime
 import com.haystackevents.app.`in`.utils.Extensions.hideKeyboard
+import com.haystackevents.app.`in`.utils.FragmentCallback
 import com.haystackevents.app.`in`.utils.ProgressCaller
 import com.haystackevents.app.`in`.view.activity.MainMenuActivity
 import com.haystackevents.app.`in`.view.adapters.NearEventsAdapter
@@ -79,7 +82,7 @@ import java.util.*
 @Suppress("DEPRECATION")
 class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraIdleListener,
-    GoogleMap.OnCameraMoveStartedListener, NearEventsAdapter.NearEventsOnClick {
+    GoogleMap.OnCameraMoveStartedListener {
 
     private lateinit var supportMapFragment: SupportMapFragment
     private var lastLocation: Location? = null
@@ -150,13 +153,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         }
 
         binding?.manualSearchView?.setOnClickListener {
-            binding?.manualSearchLayout?.let { view ->
-                TransitionManager.beginDelayedTransition(
-                    view,
-                    AutoTransition()
-                )
-                view.isVisible = !view.isVisible
-            }
+            showOrHideManualSearchView()
         }
 
         binding?.bottomSheetLayout?.btnContinue?.setOnClickListener {
@@ -171,7 +168,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
-            findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
+            findNavController().navigate(R.id.action_manualSearchMapScreen_to_dateRangeFragment, bundle)
         }
 
         binding?.bottomSheetLayout?.btnManualSearch?.isVisible = false
@@ -234,6 +231,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
         binding?.btnContinue?.setOnClickListener {
             if (validated()){
+                showOrHideManualSearchView()
                 getEventLatLong()
                 //val bundle = bundleOf(AppConstants.ARG_SERIALIZABLE to searchEvent)
                 //findNavController().navigate(R.id.action_manualSearch_to_dateRangeFragment, bundle)
@@ -269,6 +267,16 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         }
     }
 
+    private fun showOrHideManualSearchView() {
+        binding?.manualSearchLayout?.let { view ->
+            TransitionManager.beginDelayedTransition(
+                view,
+                AutoTransition()
+            )
+            view.isVisible = !view.isVisible
+        }
+    }
+
     private fun getEventLatLong() {
         val geoCoder = Geocoder(requireContext())
         val listAddress: List<Address>
@@ -279,12 +287,21 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             listAddress = geoCoder.getFromLocationName(locationName, 5)
             if (listAddress != null){
                 val location: Address = listAddress[0]
+                country = location.countryName
+                state = location.adminArea
+                city = location.locality
+                zip = location.postalCode
+                latitude = location.latitude.toString()
+                longitude = location.longitude.toString()
+
                 searchEvent?.latitude = location.latitude.toString()
                 searchEvent?.longitude = location.longitude.toString()
+                if (!isNearEventsCalled) nearestEvents(LatLng(location.latitude, location.longitude))
+                mMap.clear()
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(location.latitude, location.longitude)))
             }
 
         }catch (e: java.lang.Exception){e.printStackTrace()}
-        //nearestEvents()
     }
 
     private fun validated(): Boolean {
@@ -529,7 +546,15 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         supportMapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
-        nearEventsAdapter = NearEventsAdapter(requireContext())
+        nearEventsAdapter = NearEventsAdapter(fragmentCallback = object: FragmentCallback {
+            override fun onResult(param1: Any?, param2: Any?, param3: Any?) {
+                val bundle = bundleOf(
+                    AppConstants.ARG_OBJECTS to "Near Events",
+                    AppConstants.ARG_SERIALIZABLE to param1 as? NearEventsData
+                )
+                findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
+            }
+        })
         binding?.eventsRecyclerView?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = nearEventsAdapter
@@ -705,25 +730,28 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         getStatesList()
     }
 
-    private fun nearestEvents(currentLatLong: LatLng) {
+    private fun nearestEvents(currentLatLong: LatLng?) {
         isNearEventsCalled = true
         binding?.sliderButton?.isVisible = false
         binding?.linearLayout?.isVisible = false
 
         //nearEvent.deviceType = DEVICE_TYPE
-        nearEvent?.lat = currentLatLong.latitude.toString()
-        nearEvent?.lon = currentLatLong.longitude.toString()
+        nearEvent?.lat = currentLatLong?.latitude.toString()
+        nearEvent?.lon = currentLatLong?.longitude.toString()
         nearEvent?.id = SessionManager.instance.getUserId()
         nearEvent?.category = searchEvent?.category!!
         //nearEvent.distanceInMile = binding.bottomSheetLayout.mapRadius.text.toString().trim()
         nearEvent?.nationWide = nationWide!!
         nearEvent?.distanceInMile = distanceInMile!!
+        nearEvent?.currentDate = getCurrentDate()
+        nearEvent?.endTime = getCurrentTime()
 
         //Log.e("TAG", "nearEvent: $nearEvent")
 
         lifecycleScope.launch(Dispatchers.Main) {
             context?.let { ProgressCaller.showProgressDialog(it) }
             Repository.getNearEvents(nearEvent).enqueue(object : Callback<NearEvents> {
+                @SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(call: Call<NearEvents>, response: Response<NearEvents>) {
                     try {
                         if (response.isSuccessful){
@@ -741,7 +769,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                                     }
                                     nearEventsList.clear()
                                     nearEventsList.addAll(data)
-                                    //nearEventsAdapter.update(nearEventsList, this@ManualSearchMapScreen)
+                                    nearEventsAdapter.update(nearEventsList)
                                     setMarkers(listLatLng)
                                     binding?.sliderButton?.isVisible = true
                                     binding?.sliderIcon?.rotation = 360f
@@ -845,14 +873,6 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         }catch (e: Exception){e.printStackTrace()}
 
         return addressLine!!
-    }
-
-    override fun nearEventClick(nearEvents: NearEventsData) {
-        val bundle = bundleOf(
-            AppConstants.ARG_OBJECTS to "Near Events",
-            AppConstants.ARG_SERIALIZABLE to nearEvents
-        )
-        findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
     }
 
 }
