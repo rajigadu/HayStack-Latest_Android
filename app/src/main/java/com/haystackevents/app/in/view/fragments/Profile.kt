@@ -1,5 +1,6 @@
 package com.haystackevents.app.`in`.view.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.haystackevents.app.`in`.BuildConfig
 import com.haystackevents.app.`in`.R
 import com.haystackevents.app.`in`.databinding.FragmentProfileBinding
 import com.haystackevents.app.`in`.manager.SessionManager
@@ -30,6 +32,7 @@ class Profile: Fragment() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -52,6 +55,8 @@ class Profile: Fragment() {
         binding?.layoutTermsAndConditions?.setOnClickListener {
             findNavController().navigate(R.id.action_profile_to_termsAndConditions)
         }
+
+        binding?.appVersion?.text = "v${BuildConfig.VERSION_NAME}"
 
     }
 
