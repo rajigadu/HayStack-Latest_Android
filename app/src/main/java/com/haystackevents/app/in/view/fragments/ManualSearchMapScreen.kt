@@ -376,7 +376,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                             }
                         }
                     }
-                    ProgressCaller.hideProgressDialog()
+                    //ProgressCaller.hideProgressDialog()
 
                 }catch (e: Exception){e.printStackTrace()}
             }
@@ -384,7 +384,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             override fun onFailure(call: Call<Countries>, t: Throwable) {
                 context?.let { Toast.makeText(
                     it,t.message, Toast.LENGTH_SHORT).show() }
-                ProgressCaller.hideProgressDialog()
+                //ProgressCaller.hideProgressDialog()
             }
 
         })

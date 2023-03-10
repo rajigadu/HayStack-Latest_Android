@@ -3,7 +3,9 @@ package com.haystackevents.app.`in`.utils
 import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.Context
+import android.content.pm.PackageManager
 import android.database.Cursor
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -222,6 +224,22 @@ object Extensions {
             return uri.path
         }
         return null
+    }
+
+    fun Context.isGpsEnable(): Boolean {
+        val locationManager =
+            applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
+    fun Context.isHasPermission(vararg permissions: String): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            permissions.all { singlePermission ->
+                applicationContext.checkSelfPermission(singlePermission) == PackageManager.PERMISSION_GRANTED
+            }
+        else true
     }
 
     val constraintsBuilder =
