@@ -77,7 +77,7 @@ import java.util.*
 
 
 @Suppress("DEPRECATION")
-class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
+class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraIdleListener,
     GoogleMap.OnCameraMoveStartedListener {
 
@@ -106,12 +106,13 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     private var city: String? = null
     private var latitude: String? = null
     private var longitude: String? = null
-    private var isNearEventsCalled:Boolean = false
+    private var isNearEventsCalled: Boolean = false
 
 
     data class MapMarkers(
         val latlng: LatLng,
-        val event: String)
+        val event: String
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,8 +135,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListeners() {
-        binding?.linearLayout?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
-        binding?.sliderButton?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING) /**Layout transition enable here*/
+        binding?.linearLayout?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
+        /**Layout transition enable here*/
+        binding?.sliderButton?.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
+        /**Layout transition enable here*/
 
         binding?.toolbarSearch?.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -144,13 +147,14 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         binding?.bottomSheetLayout?.btnContinue?.setOnClickListener {
             searchEvent?.nationWide = nationWide!!
             searchEvent?.searchType = "automatically"
-            if (country != null)searchEvent?.country = country!!
-            if (state != null)searchEvent?.state = state!!
-            if (zip != null)searchEvent!!.zipcode = zip!!
-            if (city != null)searchEvent?.city = city!!
-            if (latitude != null)searchEvent?.latitude = latitude!!
-            if (longitude != null)searchEvent?.longitude = longitude!!
-            searchEvent?.distanceMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
+            if (country != null) searchEvent?.country = country!!
+            if (state != null) searchEvent?.state = state!!
+            if (zip != null) searchEvent!!.zipcode = zip!!
+            if (city != null) searchEvent?.city = city!!
+            if (latitude != null) searchEvent?.latitude = latitude!!
+            if (longitude != null) searchEvent?.longitude = longitude!!
+            searchEvent?.distanceMile =
+                binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
 
             val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
             findNavController().navigate(R.id.action_searchFragment_to_dateRangeFragment, bundle)
@@ -161,13 +165,16 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             searchEvent?.searchType = "manual"
             searchEvent?.distanceMile = distanceInMile
             val bundle = bundleOf(ARG_SERIALIZABLE to searchEvent)
-            findNavController().navigate(R.id.action_eventsMapFragment_to_manualSearchMapScreen, bundle)
+            findNavController().navigate(
+                R.id.action_eventsMapFragment_to_manualSearchMapScreen,
+                bundle
+            )
         }
 
         binding?.addressSearchView?.setOnTouchListener { view, motionEvent ->
-            when (motionEvent.action){
+            when (motionEvent.action) {
                 MotionEvent.ACTION_UP -> {
-                    if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 1000) {
                         return@setOnTouchListener false
                     }
                     lastClickTime = SystemClock.elapsedRealtime()
@@ -187,13 +194,15 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                 distanceInMile = "0"
                 binding?.bottomSheetLayout?.mapRadius?.setText("0")
                 binding?.bottomSheetLayout?.layoutMapRadius?.visibility = GONE
-            }
-            else {
+            } else {
                 binding?.bottomSheetLayout?.layoutMapRadius?.visibility = VISIBLE
                 nationWide = "0"
                 distanceInMile = binding?.bottomSheetLayout?.mapRadius?.text.toString().trim()
             }
-            val latLng = if (latitude != null && longitude != null) LatLng(latitude?.toDouble()!!,longitude?.toDouble()!!)
+            val latLng = if (latitude != null && longitude != null) LatLng(
+                latitude?.toDouble()!!,
+                longitude?.toDouble()!!
+            )
             else LatLng(lastLocation?.latitude!!, lastLocation?.longitude!!)
             if (!isNearEventsCalled) nearestEvents(latLng)
 //            if (lastLocation != null) {
@@ -205,12 +214,12 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         }
 
         binding?.bottomSheetLayout?.mapRadius?.setOnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_DONE){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (!TextUtils.isEmpty(distanceInMile)) {
                     getEventsWithInDistance()
                 } else {
                     context?.let {
-                        showAlertDialog("Please Note",it,"please enter distance")
+                        showAlertDialog("Please Note", it, "please enter distance")
                     }
                 }
                 return@setOnEditorActionListener true
@@ -224,7 +233,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                 getEventsWithInDistance()
             } else {
                 context?.let {
-                    showAlertDialog("Please Note",it,"please enter distance")
+                    showAlertDialog("Please Note", it, "please enter distance")
                 }
             }
         }
@@ -240,7 +249,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
     private fun getEventsWithInDistance() {
         drawCircle()
-        val latLng = if (latitude != null && longitude != null) LatLng(latitude?.toDouble()!!,longitude?.toDouble()!!)
+        val latLng = if (latitude != null && longitude != null) LatLng(
+            latitude?.toDouble()!!,
+            longitude?.toDouble()!!
+        )
         else LatLng(lastLocation?.latitude!!, lastLocation?.longitude!!)
         if (!isNearEventsCalled) nearestEvents(latLng)
         binding?.bottomSheetLayout?.mapRadius?.hideKeyboard()
@@ -257,7 +269,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
      * Expanding Recycler layout view transition animate
      * Handling click button rotational animation
      * */
-    private fun animateEventsListVisibility(){
+    private fun animateEventsListVisibility() {
         val rotateAnimation: RotateAnimation?
         val position: Float
 
@@ -283,10 +295,13 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                     )
                     view.isVisible = !view.isVisible
                 }
+
                 override fun onAnimationEnd(animation: Animation?) {
-                   binding?.sliderIcon?.rotation = position
+                    binding?.sliderIcon?.rotation = position
                 }
-                override fun onAnimationRepeat(animation: Animation?) {} })
+
+                override fun onAnimationRepeat(animation: Animation?) {}
+            })
         }
     }
 
@@ -308,7 +323,12 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                     .radius(it)
                     .strokeWidth(1.0f)
                     .strokeColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-                    .fillColor(ContextCompat.getColor(requireContext(), R.color.colorMapRadiusCircle))
+                    .fillColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.colorMapRadiusCircle
+                        )
+                    )
             }
         }?.let { mMap.addCircle(it) }
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16f))
@@ -318,7 +338,9 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         if (lastLocation != null) {
             val latLng = lastLocation?.longitude?.let { longitude ->
                 lastLocation?.latitude?.let { latitude ->
-                LatLng(latitude, longitude) } }
+                    LatLng(latitude, longitude)
+                }
+            }
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16f)
             mMap.animateCamera(cameraUpdate)
         }
@@ -326,9 +348,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
     private fun initiateView() {
         nearEvent = GetNearEvents()
-        if (!Places.isInitialized()){
+        if (!Places.isInitialized()) {
             Places.initialize(
-                requireContext().applicationContext, resources.getString(R.string.google_maps_key))
+                requireContext().applicationContext, resources.getString(R.string.google_maps_key)
+            )
         }
         fields = listOf(
             Place.Field.ID,
@@ -344,7 +367,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             peekHeight = 200
             this.state = BottomSheetBehavior.STATE_EXPANDED
         }
-        supportMapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
+        supportMapFragment =
+            childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         supportMapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
@@ -354,7 +378,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                     ARG_OBJECTS to "Near Events",
                     ARG_SERIALIZABLE to param1 as? NearEventsData
                 )
-                findNavController().navigate(R.id.action_searchFragment_to_eventsInfoFragment, bundle)
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_eventsInfoFragment,
+                    bundle
+                )
             }
         })
         binding?.eventsRecyclerView?.apply {
@@ -364,7 +391,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
         lifecycleScope.launch(Dispatchers.Main) {
             //Get Near Events
-            val currentLatLong = if (latitude != null && longitude != null) LatLng(latitude?.toDouble()!!, longitude?.toDouble()!!)
+            val currentLatLong = if (latitude != null && longitude != null) LatLng(
+                latitude?.toDouble()!!,
+                longitude?.toDouble()!!
+            )
             else SessionManager.instance.getUserLatLng()
             if (!isNearEventsCalled) nearestEvents(currentLatLong)
         }
@@ -392,20 +422,33 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         if (ActivityCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(),
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_REQ_LOCATION)
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+            requestPermission.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION
+//                ), PERMISSION_REQ_LOCATION
+//            )
             return
         }
+        launchMap()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun launchMap() {
         mMap.isMyLocationEnabled = true
         mMap.setOnCameraMoveListener(this)
         mMap.setOnCameraMoveStartedListener(this)
         mMap.setOnCameraIdleListener(this)
         fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
 
-            if (location != null){
+            if (location != null) {
                 lastLocation = location
 
                 val lat = if (nearEvent.lat != null) nearEvent.lat
@@ -414,21 +457,35 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                 else SessionManager.instance.sPreference.getString(USER_LONGITUDE, "")
                 //Log.e("TAG", "lat: $lat  lon: $lon")
                 //val currentLatLong = LatLng(location.latitude, location.longitude)
-                
-                val currentLatLong = lon?.toDouble()?.let { lat?.toDouble()
-                    ?.let { it1 -> LatLng(it1, it) } }
+
+                val currentLatLong = lon?.toDouble()?.let {
+                    lat?.toDouble()
+                        ?.let { it1 -> LatLng(it1, it) }
+                }
                 setLocationAddress(currentLatLong)
                 //Log.e("TAG", "setupMap:")
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 16f))
-                
+
                 //Get Near Events
                 //nearestEvents(currentLatLong)
             }
         }
     }
 
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {permissions ->
+        val granted = permissions.entries.all {
+            it.value == true
+        }
+        if (granted) {
+            launchMap()
+        }
+    }
+
     private var resultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) { result ->
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val place = Autocomplete.getPlaceFromIntent(data!!)
@@ -449,14 +506,15 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                 latitude = address.latitude.toString()
                 longitude = address.longitude.toString()
 
-            }catch (e: Exception){e.printStackTrace()}
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
             //setLocationAddress(place.latLng!!)
             mMap.clear()
             if (!isNearEventsCalled) nearestEvents(place.latLng!!)
             mMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng!!))
-        }
-        else if (result.resultCode == RESULT_ERROR){
+        } else if (result.resultCode == RESULT_ERROR) {
             val status = Autocomplete.getStatusFromIntent(result.data!!)
         }
     }
@@ -486,9 +544,11 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             latitude = address?.latitude.toString()
             longitude = address?.longitude.toString()
 
-        }catch (e: Exception){e.printStackTrace()}
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
-        if (addressLine != null){
+        if (addressLine != null) {
             placeMarkerOnMap(currentLatLong, addressLine)
             //Log.e("TAG", "called latLng: $currentLatLong")
             binding?.addressSearchView?.setText(addressLine, true)
@@ -497,13 +557,13 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
     private fun placeMarkerOnMap(currentLatLong: LatLng?, addressLine: String) {
         currentLatLong?.let {
-            if (currentmarker == null){
+            if (currentmarker == null) {
                 val markerOptions = MarkerOptions().position(currentLatLong)
                 markerOptions.title(addressLine)
                 markerOptions.icon(bitmapDescriptor())
                 currentmarker = mMap.addMarker(markerOptions)
 
-            }else{
+            } else {
                 currentmarker?.title = addressLine
                 currentmarker?.position = currentLatLong
             }
@@ -515,7 +575,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             ContextCompat.getDrawable(it, R.drawable.haystack_logo)
         }
         vectorDrawable?.setBounds(
-            0, 0, 42, 42)
+            0, 0, 42, 42
+        )
         val bitmap = Bitmap.createBitmap(
             42, 42, Bitmap.Config.ARGB_8888
         )
@@ -554,19 +615,22 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
 
         lifecycleScope.launch(Dispatchers.Main) {
             context?.let { ProgressCaller.showProgressDialog(it) }
-            Repository.getNearEvents(nearEvent).enqueue(object : Callback<NearEvents>{
+            Repository.getNearEvents(nearEvent).enqueue(object : Callback<NearEvents> {
                 override fun onResponse(call: Call<NearEvents>, response: Response<NearEvents>) {
 
                     try {
 
-                        if (response.isSuccessful){
-                            if (response.body()?.status == "1"){
+                        if (response.isSuccessful) {
+                            if (response.body()?.status == "1") {
                                 response.body()?.data?.let { data ->
                                     listLatLng.clear()
-                                    for (item in data){
+                                    for (item in data) {
                                         listLatLng.add(
                                             MapMarkers(
-                                                latlng = LatLng(item.latitude.toDouble(), item.longitude.toDouble()),
+                                                latlng = LatLng(
+                                                    item.latitude.toDouble(),
+                                                    item.longitude.toDouble()
+                                                ),
                                                 event = item.event_name
                                             )
                                         )
@@ -579,18 +643,23 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                                     binding?.sliderButton?.isVisible = true
                                     binding?.sliderIcon?.rotation = 360f
                                 }
-                            }else{
+                            } else {
                                 //showAlertDialog("No Events", requireContext(), response.body()?.message!!)
                                 //showSnackBar(binding?.constraintCoordinatorLayout, response.body()?.message!!)
-                                context?.let { Toast.makeText(
-                                    it,response.body()?.message,Toast.LENGTH_SHORT).show() }
+                                context?.let {
+                                    Toast.makeText(
+                                        it, response.body()?.message, Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                                 binding?.sliderButton?.isVisible = false
                                 binding?.sliderIcon?.rotation = 360f
                             }
                             ProgressCaller.hideProgressDialog()
                         }
 
-                    }catch (e: Exception){e.printStackTrace()}
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                     ProgressCaller.hideProgressDialog()
                     isNearEventsCalled = false
                 }
@@ -599,7 +668,8 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
                     ProgressCaller.hideProgressDialog()
                     context?.let { context ->
                         Toast.makeText(
-                            context, t.message, Toast.LENGTH_SHORT).show()
+                            context, t.message, Toast.LENGTH_SHORT
+                        ).show()
                     }
                     isNearEventsCalled = false
                     binding?.sliderButton?.isVisible = false
@@ -613,10 +683,11 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
     private fun setMarkers(listLatLng: ArrayList<MapMarkers>) {
         listLatLng.forEach {
             //Log.e("TAG", "latLng: $it")
-            mMap.addMarker(MarkerOptions()
-                .position(it.latlng)
-                .title("${it.event}, \n ${getAddress(it.latlng)}")
-                .icon(bitmapDescriptor())
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(it.latlng)
+                    .title("${it.event}, \n ${getAddress(it.latlng)}")
+                    .icon(bitmapDescriptor())
             )
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(16f))
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(it.latlng))
@@ -630,7 +701,7 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
         //Log.e("TAG", "locationChanged:")
 
         mMap.setOnCameraIdleListener {
-            if (currentmarker != null){
+            if (currentmarker != null) {
                 currentmarker?.remove()
                 latLng = currentmarker?.position!!
                 setLocationAddress(latLng)
@@ -652,14 +723,16 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             //Log.e("TAG", "onCameraIdle:")
             //setLocationAddress(currentLatLong)
 
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: IndexOutOfBoundsException) {
+            e.printStackTrace()
         }
-        catch (e: IOException) {e.printStackTrace()}
-        catch (e: IndexOutOfBoundsException) {e.printStackTrace()}
     }
 
     override fun onCameraMoveStarted(p0: Int) {}
 
-    private fun getAddress(latLng: LatLng): String{
+    private fun getAddress(latLng: LatLng): String {
         geocoder = Geocoder(requireContext(), Locale.getDefault())
 
         var addresses: List<Address>? = null
@@ -674,7 +747,9 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListen
             )
             addressLine = addresses[0].getAddressLine(0)
 
-        }catch (e: Exception){e.printStackTrace()}
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         return addressLine!!
     }

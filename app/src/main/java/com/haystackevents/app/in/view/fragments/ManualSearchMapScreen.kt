@@ -45,7 +45,6 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.haystackevents.app.`in`.R
@@ -274,9 +273,17 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                 AutoTransition()
             )
             view.isVisible = !view.isVisible
-            if (view.isVisible) {
-                binding?.bottomSheetLayout?.bottomSheet?.let { bottomSheet ->
-
+            binding?.bottomSheetLayout?.bottomSheet?.let { bottomSheet ->
+                if (view.isVisible) {
+                    BottomSheetBehavior.from(bottomSheet).apply {
+                        peekHeight = 200
+                        this.state = BottomSheetBehavior.STATE_COLLAPSED
+                    }
+                } else {
+                    BottomSheetBehavior.from(bottomSheet).apply {
+                        peekHeight = 200
+                        this.state = BottomSheetBehavior.STATE_EXPANDED
+                    }
                 }
             }
         }
@@ -597,14 +604,33 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION),
-                AppConstants.PERMISSION_REQ_LOCATION
-            )
+            requestPermission.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION))
+//            ActivityCompat.requestPermissions(requireActivity(),
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION),
+//                AppConstants.PERMISSION_REQ_LOCATION
+//            )
             return
         }
+
+    }
+
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {permissions ->
+        val granted = permissions.entries.all {
+            it.value == true
+        }
+        if (granted) {
+            launchMap()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun launchMap() {
         mMap.isMyLocationEnabled = true
         mMap.setOnCameraMoveListener(this)
         mMap.setOnCameraMoveStartedListener(this)
@@ -732,7 +758,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         super.onResume()
         (activity as MainMenuActivity).hideBottomNav()
         //nearestEvents()
-        getStatesList()
+        //getStatesList()
     }
 
     private fun nearestEvents(currentLatLong: LatLng?) {
@@ -792,6 +818,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
                     }catch (e: Exception){e.printStackTrace()}
                     ProgressCaller.hideProgressDialog()
+                    getStatesList()
                     isNearEventsCalled = false
                 }
 
