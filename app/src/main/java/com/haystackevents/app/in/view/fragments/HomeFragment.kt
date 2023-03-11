@@ -18,6 +18,7 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -36,6 +37,7 @@ import com.haystackevents.app.`in`.view.adapters.NearestEventsListAdapter
 import com.haystackevents.app.`in`.R
 import com.haystackevents.app.`in`.manager.SessionManager
 import com.haystackevents.app.`in`.utils.AppConstants.PERMISSION_REQ_LOCATION
+import com.haystackevents.app.`in`.utils.Extensions.isGpsEnable
 import com.haystackevents.app.`in`.utils.Extensions.showSnackBarSettings
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -181,31 +183,48 @@ class HomeFragment: Fragment(), MultiplePermissionsListener, NearestEventsListAd
         }
     }
 
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {permissions ->
+        val granted = permissions.entries.all {
+            it.value == true
+        }
+        if (granted) {
+            getLocationData()
+        }
+    }
+
     private fun getCurrentUserLocation() {
         if (ActivityCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), permissionsLocation, PERMISSION_REQ_LOCATION)
+            requestPermission.launch(permissionsLocation)
+            //ActivityCompat.requestPermissions(requireActivity(), permissionsLocation, PERMISSION_REQ_LOCATION)
             return
         }else{
-            fusedLocationClient!!.lastLocation.addOnSuccessListener(requireActivity()) { location ->
-                lastLocation = location
+            getLocationData()
+        }
+    }
 
-                if (lastLocation == null) {
-                    requestNewLocationData()
-                }else{
-                    latitude = lastLocation!!.latitude
-                    longitude = lastLocation!!.longitude
+    @SuppressLint("MissingPermission")
+    private fun getLocationData() {
+        fusedLocationClient?.lastLocation?.addOnSuccessListener(requireActivity()) { location ->
+            lastLocation = location
 
-                    Log.e("TAG", "lat: $latitude   lng: $longitude")
-                    SessionManager.instance.saveUserLatLong(latitude!!, longitude!!)
+            if (lastLocation == null) {
+                requestNewLocationData()
+            }else{
+                latitude = lastLocation!!.latitude
+                longitude = lastLocation!!.longitude
 
-                    if (latitude != null && longitude != null){
-                        getUserAddress()
-                        nearestEvents()
-                    }
+                Log.e("TAG", "lat: $latitude   lng: $longitude")
+                SessionManager.instance.saveUserLatLong(latitude!!, longitude!!)
+
+                if (latitude != null && longitude != null){
+                    getUserAddress()
+                    nearestEvents()
                 }
             }
         }
