@@ -56,7 +56,6 @@ import com.haystackevents.app.`in`.network.response.post_data.GetNearEvents
 import com.haystackevents.app.`in`.network.response.search_events.SearchByEvent
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_OBJECTS
 import com.haystackevents.app.`in`.utils.AppConstants.ARG_SERIALIZABLE
-import com.haystackevents.app.`in`.utils.AppConstants.PERMISSION_REQ_LOCATION
 import com.haystackevents.app.`in`.utils.AppConstants.USER_LATITUDE
 import com.haystackevents.app.`in`.utils.AppConstants.USER_LONGITUDE
 import com.haystackevents.app.`in`.utils.Extensions.getCurrentDate
@@ -428,13 +427,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ))
-//            ActivityCompat.requestPermissions(
-//                requireActivity(),
-//                arrayOf(
-//                    Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION
-//                ), PERMISSION_REQ_LOCATION
-//            )
             return
         }
         launchMap()
@@ -498,13 +490,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                     place.latLng?.longitude!!,
                     1
                 )
-                val address = addresses[0]
-                country = address.countryName
-                state = address.adminArea
-                city = address.locality
-                zip = address.postalCode
-                latitude = address.latitude.toString()
-                longitude = address.longitude.toString()
+                val address = addresses?.firstOrNull()
+                country = address?.countryName
+                state = address?.adminArea
+                city = address?.locality
+                zip = address?.postalCode
+                latitude = address?.latitude.toString()
+                longitude = address?.longitude.toString()
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -745,7 +737,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 latLng.longitude,
                 1
             )
-            addressLine = addresses[0].getAddressLine(0)
+            addressLine = addresses?.firstOrNull()?.getAddressLine(0)
 
         } catch (e: Exception) {
             e.printStackTrace()

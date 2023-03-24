@@ -1,6 +1,7 @@
 package com.haystackevents.app.`in`.view.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -256,6 +257,7 @@ class MembersPublish: Fragment(), NewlyAddedMembersAdapter.MembersClickEventList
         }
     }
 
+    @SuppressLint("Range")
     private val readContactActivityResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
 
@@ -265,34 +267,35 @@ class MembersPublish: Fragment(), NewlyAddedMembersAdapter.MembersClickEventList
 
                 val uriContactData: Uri = result.data?.data!!
 
-                val c: Cursor = requireActivity().contentResolver.query(
+                val cursor: Cursor? = activity?.contentResolver?.query(
                     uriContactData,
                     null, null, null, null
-                )!!
+                )
 
-                var number = ""
+                var number: String? = null
 
-                if (c.count >= 1) {
-                    if (c.moveToFirst()) {
-                        val id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
-                        val hasPhone = c.getString(c.getColumnIndex(
-                            ContactsContract.Contacts.HAS_PHONE_NUMBER))
+                if ((cursor?.count ?: 0) >= 1) {
+                    if (cursor?.moveToFirst() == true) {
+                        val contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup._ID))
+                        val id = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
+                        val hasPhone = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))
 
-                        if (hasPhone.equals("1", true)) {
-                            val phones: Cursor = requireActivity().contentResolver.query(
+                        if (hasPhone == 1) {
+                            val phones: Cursor? = activity?.contentResolver?.query(
                                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
-                                null, null
-                            )!!
-                            phones.moveToFirst()
-                            number = phones.getString(phones.getColumnIndex("data1"))
+                                arrayOf(contactId), null
+                            )
+                            phones?.moveToFirst()
+                            number = phones?.getString(phones.getColumnIndex("data1"))
                         }
-                        val name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                        val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
 
                         editTextFullName?.setText(name)
                         editTextMobile?.setText(number)
                     }
                 }
+                cursor?.close()
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -303,7 +306,7 @@ class MembersPublish: Fragment(), NewlyAddedMembersAdapter.MembersClickEventList
 
     private fun getEventLatLong() {
         val geoCoder = Geocoder(requireContext())
-        val listAddress: List<Address>
+        val listAddress: MutableList<Address>?
         val locationName = events?.streetaddress + "," + events?.city + "," + events?.state +
                 "," + events?.zipcode
 

@@ -238,7 +238,7 @@ class ManualSearch: Fragment() {
 
     private fun getEventLatLong() {
         val geoCoder = Geocoder(requireContext())
-        val listAddress: List<Address>
+        val listAddress: MutableList<Address>?
         val locationName = searchEvent?.city + "," + searchEvent?.city + "," + searchEvent?.state +
                 "," + searchEvent?.zipcode
 

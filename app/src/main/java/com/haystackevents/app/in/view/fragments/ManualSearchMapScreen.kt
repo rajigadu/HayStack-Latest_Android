@@ -291,7 +291,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
     private fun getEventLatLong() {
         val geoCoder = Geocoder(requireContext())
-        val listAddress: List<Address>
+        val listAddress: MutableList<Address>?
         val locationName = searchEvent?.city + "," + searchEvent?.city + "," + searchEvent?.state +
                 "," + searchEvent?.zipcode
 
@@ -607,15 +607,9 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             requestPermission.launch(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION))
-//            ActivityCompat.requestPermissions(requireActivity(),
-//                arrayOf(
-//                    Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION),
-//                AppConstants.PERMISSION_REQ_LOCATION
-//            )
             return
         }
-
+        launchMap()
     }
 
     private val requestPermission = registerForActivityResult(
@@ -671,13 +665,13 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                     place.latLng?.longitude!!,
                     1
                 )
-                val address = addresses[0]
-                country = address.countryName
-                state = address.adminArea
-                city = address.locality
-                zip = address.postalCode
-                latitude = address.latitude.toString()
-                longitude = address.longitude.toString()
+                val address = addresses?.get(0)
+                country = address?.countryName
+                state = address?.adminArea
+                city = address?.locality
+                zip = address?.postalCode
+                latitude = address?.latitude.toString()
+                longitude = address?.longitude.toString()
 
             }catch (e: Exception){e.printStackTrace()}
 
@@ -704,15 +698,15 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                 currentLatLong.longitude,
                 1
             )
-            addressLine = addresses[0].getAddressLine(0)
+            addressLine = addresses?.firstOrNull()?.getAddressLine(0)
 
-            val address = addresses[0]
-            country = address.countryName
-            state = address.adminArea
-            city = address.locality
-            zip = address.postalCode
-            latitude = address.latitude.toString()
-            longitude = address.longitude.toString()
+            val address = addresses?.firstOrNull()
+            country = address?.countryName
+            state = address?.adminArea
+            city = address?.locality
+            zip = address?.postalCode
+            latitude = address?.latitude.toString()
+            longitude = address?.longitude.toString()
 
         }catch (e: Exception){e.printStackTrace()}
 
@@ -890,7 +884,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private fun getAddress(latLng: LatLng): String{
         geocoder = Geocoder(requireContext(), Locale.getDefault())
 
-        var addresses: List<Address>? = null
+        val addresses: List<Address>?
         var addressLine: String? = null
 
         try {
@@ -900,7 +894,7 @@ class ManualSearchMapScreen: Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
                 latLng.longitude,
                 1
             )
-            addressLine = addresses[0].getAddressLine(0)
+            addressLine = addresses?.firstOrNull()?.getAddressLine(0)
 
         }catch (e: Exception){e.printStackTrace()}
 
